@@ -19,7 +19,7 @@ namespace InsidetheBackrooms
         public const string Name = "Inside the Backrooms Menu"; // Name of the Mod.  (MUST BE SET)
         public const string Description = "Inside the Backrooms Menu"; // Description for the Mod.  (Set as null if none)
         public const string Author = "WoodgamerHD"; // Author of the Mod.  (MUST BE SET)
-        public const string Company = "DO NOT FUCKEN REPOST OR CLAMS ARE YOURS"; // Company that made the Mod.  (Set as null if none)
+        public const string Company = "DO NOT FUCKEN REPOST OR CLAIM ARE YOURS"; // Company that made the Mod.  (Set as null if none)
         public const string Version = "1.3"; // Version of the Mod.  (MUST BE SET)
         public const string DownloadLink = "https://www.unknowncheats.me/forum/unity/576759-inside-backrooms-esp.html"; // Download Link for the Mod.  (Set as null if none)
     }
