@@ -330,28 +330,28 @@ namespace InsidetheBackrooms
                     {
                         foreach (PartygoerBalloon player in PartygoerBalloon)
                         {
-                            player.CmdExplode();
+                            player.UserCode_CmdExplode();
                         }
                     }
                     if (GUILayout.Button("Open all Gifts"))
                     {
                         foreach (Giftbox player in Giftbox)
                         {
-                            player.RpcOpenGift();
+                            player.UserCode_CmdOpenGift();
                         }
                     }
                     if (GUILayout.Button("Blow all Candles"))
                     {
                         foreach (Candles player in Candles)
                         {
-                            player.RpcBlow();
+                            player.UserCode_CmdBlowCandle();
                         }
                     }
                     if (GUILayout.Button("Blow Candles on Cake"))
                     {
                         foreach (PartygoerCake player in PartygoerCake)
                         {
-                            player.CmdBlowCandle();
+                            player.UserCode_CmdBlowCandle();
                         }
                     }
                     //EndPartyGames
