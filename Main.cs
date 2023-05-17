@@ -1,4 +1,4 @@
-﻿using MelonLoader;
+using MelonLoader;
 using UnityEngine;
 using static UnityEngine.Object;
 using UnityEngine.InputSystem;
@@ -6,7 +6,7 @@ using Il2Cpp;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
- 
+
 using System.Collections;
 using Il2CppCrosstales.Common.Util;
 using UnityEngine.Events;
@@ -26,7 +26,7 @@ namespace InsidetheBackrooms
 
     public class InsidetheBackrooms : MelonPlugin
     {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //new                                                                                    
-          string[] itemNames = new string[] { "FunDoorKey","Hammer", "RedKey","MedallionFish", "MedallionParrot", "Cassete", "Plier", "GeigerCounter", "ClockHands", "Fuse", "Hand", "Nose", "MedallionRat", "Valve", "Fingers", "Arm", "ScrewDriver", "AlmondWater", "Radio", "ProtectionSuit", "PartyHat", "MetalDetector", "Ear", "GarageCard", "Extinguisher", "Teeth", "CodeAbecedary", "GearLeverHandle", "Flashlight", "PetrolCanEmpty", "Eye", "Foot", "SewerEmergencyKey", "SewerStorageKey", "SewerCanalsKey", "Gear", "CalmingPills", "RedAccesCard","MothJelly", "BoilerRoomKeys", "VynilDish", "CurvedPipe", "Ingot8", "Pipe", "MothCoccoon", "Ingot10", "StatueFace", "StorageKey", "Ingot6" };
+        string[] itemNames = new string[] { "FunDoorKey", "Hammer", "RedKey", "MedallionFish", "MedallionParrot", "Cassete", "Plier", "GeigerCounter", "ClockHands", "Fuse", "Hand", "Nose", "MedallionRat", "Valve", "Fingers", "Arm", "ScrewDriver", "AlmondWater", "Radio", "ProtectionSuit", "PartyHat", "MetalDetector", "Ear", "GarageCard", "Extinguisher", "Teeth", "CodeAbecedary", "GearLeverHandle", "Flashlight", "PetrolCanEmpty", "Eye", "Foot", "SewerEmergencyKey", "SewerStorageKey", "SewerCanalsKey", "Gear", "CalmingPills", "RedAccesCard", "MothJelly", "BoilerRoomKeys", "VynilDish", "CurvedPipe", "Ingot8", "Pipe", "MothCoccoon", "Ingot10", "StatueFace", "StorageKey", "Ingot6" };
 
 
 
@@ -72,8 +72,9 @@ namespace InsidetheBackrooms
         public static List<InteractableProp> InteractableProp = new List<InteractableProp>();
         public static List<Candles> Candles = new List<Candles>();
         public static List<FunLevelRoom> FunLevelRoom = new List<FunLevelRoom>();
-     
-    
+        public static List<NetworkReparent> NetworkReparent = new List<NetworkReparent>();
+       
+
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
         private Color backgroundColor = Color.black; // Background color
@@ -94,10 +95,10 @@ namespace InsidetheBackrooms
 
                 foreach (Renderer renderer in player?.gameObject?.GetComponentsInChildren<Renderer>())
                 {
-                    
 
-                        renderer.material = chamsMaterial;
-                    
+
+                    renderer.material = chamsMaterial;
+
                 }
             }
         }
@@ -133,7 +134,7 @@ namespace InsidetheBackrooms
                 InteractableProp = FindObjectsOfType<InteractableProp>().ToList();
                 Candles = FindObjectsOfType<Candles>().ToList();
                 FunLevelRoom = FindObjectsOfType<FunLevelRoom>().ToList();
-
+                NetworkReparent = FindObjectsOfType<NetworkReparent>().ToList();
                 if (Chamsesp)
                 {
                     DoChams();
@@ -143,12 +144,12 @@ namespace InsidetheBackrooms
             }
 
 
-         
+
 
             if (Keyboard.current.insertKey.wasPressedThisFrame) // Toggle the menu when the Tab key is pressed
             {
                 showMenu = !showMenu;
-            
+
             }
             if (infStamina)
             {
@@ -157,18 +158,18 @@ namespace InsidetheBackrooms
 
                     player.Stamina = float.MaxValue;
 
-                   
+
 
                 }
 
 
             }
-           
+
             cam = Camera.main;
 
 
         }
-     
+
 
 
         public override void OnInitializeMelon()
@@ -221,6 +222,7 @@ namespace InsidetheBackrooms
             {
                 tab = 3;
             }
+            
             GUILayout.EndVertical();
 
             // Display content for the selected tab
@@ -232,24 +234,24 @@ namespace InsidetheBackrooms
             switch (tab)
             {
                 case 0:
-              
+
                     infStamina = GUILayout.Toggle(infStamina, "infStamina");
 
                     if (GUILayout.Button("CmdKillPlayer"))
                     {
                         foreach (PlayerStats player in BasePlayer)
                         {
-                            
-                            player.CmdKillPlayer();
+
+                            player.UserCode_CmdKillPlayer();
 
                         }
                     }
-
+                
                     if (GUILayout.Button("Give List"))
                     {
                         GiveList = !GiveList;
                     }
-                  
+
                     //PartygoerCake
 
                     if (GUILayout.Button("ItemDumper"))
@@ -268,7 +270,7 @@ namespace InsidetheBackrooms
                         }
 
                     }
-                  
+
                     break;
 
                 case 1:
@@ -467,9 +469,9 @@ namespace InsidetheBackrooms
                     {
                         foreach (MiscTest playerc in MiscTest)
                         {
-                                foreach (BackroomsExitZone player in BackroomsExit)
-                                {  //player.DEVMODE_ENABLED = true;
-                                    playerc.TeleportPlayer(player.teleportPoint.transform.position);
+                            foreach (BackroomsExitZone player in BackroomsExit)
+                            {  //player.DEVMODE_ENABLED = true;
+                                playerc.TeleportPlayer(player.teleportPoint.transform.position);
 
                             }
                         }
@@ -477,6 +479,8 @@ namespace InsidetheBackrooms
 
 
                     break;
+               
+                   
             }
 
             GUILayout.EndVertical();
@@ -500,12 +504,12 @@ namespace InsidetheBackrooms
                     // Get the selected location from the locations array
                     string selectedLocation = itemNames[i];
 
-                    foreach (PlayerStats playert in BasePlayer)
+                    foreach (NetworkReparent playert in NetworkReparent)
                     {
                         foreach (MiscTest player in MiscTest)
                         {
                             //player.DEVMODE_ENABLED = true;
-                            player.CmdSpawnItem(selectedLocation, playert.transform.position);
+                            player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                         }
                     }
@@ -555,9 +559,9 @@ namespace InsidetheBackrooms
         {
             return Vector3.Distance(cam.transform.position, worldPos);
         }
-  
 
-     
+
+
 
         public static List<Transform> GetAllBones(Animator a)
         {
@@ -591,7 +595,7 @@ namespace InsidetheBackrooms
         }
         public override void OnGUI()
         {
-
+           
 
             if (showMenu) // Only draw the menu when showMenu is true
             {
@@ -646,46 +650,46 @@ namespace InsidetheBackrooms
                        player.name.Replace("(Clone)", "") + "\n" + "Point: " + player.teleportPoint.transform.position + "\n" + "EndGameType: " + player.endGameType, Color.magenta, true, 12, FontStyle.Bold);
                     }
                 }
-               
+
             }
 
-          
-                if (ElevatorEsp)
+
+            if (ElevatorEsp)
+            {
+                foreach (Elevator player in Elevator)
                 {
-                    foreach (Elevator player in Elevator)
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+
+                    if (ESPUtils.IsOnScreen(w2s))
                     {
-                        Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
-
-                        if (ESPUtils.IsOnScreen(w2s))
-                        {
-
-                            ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                           player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.m_InternalElevatorCode, Color.magenta, true, 12, FontStyle.Bold);
-                        }
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.m_InternalElevatorCode, Color.magenta, true, 12, FontStyle.Bold);
                     }
                 }
-            
-          
-                if (ItemsEsp)
+            }
+
+
+            if (ItemsEsp)
+            {
+                foreach (CollectableItem player in ItemObj)
                 {
-                    foreach (CollectableItem player in ItemObj)
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s) && DistanceFromCamera(player.transform.position) < 80)
                     {
-                        Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
-                        if (ESPUtils.IsOnScreen(w2s) && DistanceFromCamera(player.transform.position) < 80)
-                        {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                        player.m_ItemName, Color.blue, true, 12, FontStyle.Bold);
 
-                            ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                            player.m_ItemName, Color.blue, true, 12, FontStyle.Bold);
-
-
-                        }
 
                     }
-                }
 
-           
+                }
+            }
+
+
             if (giftboxesp)
             {
                 foreach (Giftbox player in Giftbox)
@@ -742,15 +746,15 @@ namespace InsidetheBackrooms
             if (RespawnDoorEsp)
             {
                 foreach (RespawnDoor player in RespawnDoor)
-            {
+                {
 
-                
+
 
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
                     if (ESPUtils.IsOnScreen(w2s))
                     {
-                   
+
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                         "Respawn Door" + "\n", Color.yellow, true, 12, FontStyle.Bold);
@@ -764,14 +768,14 @@ namespace InsidetheBackrooms
             if (DoorEsp)
             {
                 foreach (EndDoor player in Door)
-                    {        
+                {
 
 
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
                     if (ESPUtils.IsOnScreen(w2s))
                     {
-                     
+
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                         "End Door" + "\n", Color.cyan, true, 12, FontStyle.Bold);
 
@@ -784,12 +788,12 @@ namespace InsidetheBackrooms
             if (EntitysEsp)
             {
                 foreach (BaseAIEntity player in BaseAI)
-            {
+                {
 
-              
+
 
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
-                
+
                     if (ESPUtils.IsOnScreen(w2s))
                     {
 
@@ -812,11 +816,11 @@ namespace InsidetheBackrooms
                 }
 
             }
-          
+
         }
 
 
 
-     
+
     }
 }
