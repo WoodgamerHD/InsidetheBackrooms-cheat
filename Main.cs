@@ -25,8 +25,17 @@ namespace InsidetheBackrooms
     }
 
     public class InsidetheBackrooms : MelonPlugin
-    {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //new                                                                                    
-        string[] itemNames = new string[] { "FunDoorKey", "Hammer", "RedKey", "MedallionFish", "MedallionParrot", "Cassete", "Plier", "GeigerCounter", "ClockHands", "Fuse", "Hand", "Nose", "MedallionRat", "Valve", "Fingers", "Arm", "ScrewDriver", "AlmondWater", "Radio", "ProtectionSuit", "PartyHat", "MetalDetector", "Ear", "GarageCard", "Extinguisher", "Teeth", "CodeAbecedary", "GearLeverHandle", "Flashlight", "PetrolCanEmpty", "Eye", "Foot", "SewerEmergencyKey", "SewerStorageKey", "SewerCanalsKey", "Gear", "CalmingPills", "RedAccesCard", "MothJelly", "BoilerRoomKeys", "VynilDish", "CurvedPipe", "Ingot8", "Pipe", "MothCoccoon", "Ingot10", "StatueFace", "StorageKey", "Ingot6" };
+    {                            
+    //alphabetical order                                                                                    
+         string[] itemNames = new string[]
+ {
+    "AlmondWater", "Arm", "BoilerRoomKeys", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe", "Ear",
+    "Extinguisher", "Eye", "Fingers", "Flashlight", "Foot", "FunDoorKey", "Fuse", "GarageCard", "Gear", "GearLeverHandle",
+    "GeigerCounter", "Hammer", "Hand", "Ingot6", "Ingot8", "Ingot10", "MedallionFish", "MedallionParrot", "MedallionRat",
+    "MetalDetector", "MothCoccoon", "MothJelly", "Nose", "PartyHat", "PetrolCanEmpty", "Pipe", "Plier", "ProtectionSuit",
+    "Radio", "RedAccesCard", "RedKey", "ScrewDriver", "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
+    "StatueFace", "StorageKey", "Teeth", "Valve", "VynilDish"
+ };
 
 
 
