@@ -20,22 +20,32 @@ namespace InsidetheBackrooms
         public const string Description = "Inside the Backrooms Menu"; // Description for the Mod.  (Set as null if none)
         public const string Author = "WoodgamerHD"; // Author of the Mod.  (MUST BE SET)
         public const string Company = "DO NOT FUCKEN REPOST OR CLAIM ARE YOURS"; // Company that made the Mod.  (Set as null if none)
-        public const string Version = "1.3"; // Version of the Mod.  (MUST BE SET)
-        public const string DownloadLink = "https://www.unknowncheats.me/forum/unity/576759-inside-backrooms-esp.html"; // Download Link for the Mod.  (Set as null if none)
+        public const string Version = "1.4"; // Version of the Mod.  (MUST BE SET)
+        public const string DownloadLink = "https://github.com/WoodgamerHD/InsidetheBackrooms-cheat"; // Download Link for the Mod.  (Set as null if none)
     }
 
     public class InsidetheBackrooms : MelonPlugin
-    {                            
-    //alphabetical order                                                                                    
-         string[] itemNames = new string[]
- {
-    "AlmondWater", "Arm", "BoilerRoomKeys", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe", "Ear",
+    {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //new                                                                                    
+        string[] itemNames = new string[]
+{
+    "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe", "Ear",
     "Extinguisher", "Eye", "Fingers", "Flashlight", "Foot", "FunDoorKey", "Fuse", "GarageCard", "Gear", "GearLeverHandle",
-    "GeigerCounter", "Hammer", "Hand", "Ingot6", "Ingot8", "Ingot10", "MedallionFish", "MedallionParrot", "MedallionRat",
+    "GeigerCounter", "Hammer", "Hand", "Ingot6", "Ingot8", "Ingot10", "MotionSensor", "MedallionFish", "MedallionParrot", "MedallionRat",
     "MetalDetector", "MothCoccoon", "MothJelly", "Nose", "PartyHat", "PetrolCanEmpty", "Pipe", "Plier", "ProtectionSuit",
     "Radio", "RedAccesCard", "RedKey", "ScrewDriver", "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
     "StatueFace", "StorageKey", "Teeth", "Valve", "VynilDish"
- };
+};
+        string[] Boosteritem = new string[]
+    {  "AlmondWater","CalmingPills", "MothJelly","Flashlight","Radio" };
+
+        string[] DarkRoomsParking = new string[] {
+            "ClockHands", "Cassete", "ScrewDriver", "Hammer", "RedAccesCard", "Fuse", "Plier","GeigerCounter","Extinguisher","ProtectionSuit","Valve","GarageCard",
+            "Ear", "Eye", "Fingers", "Foot", "Hand","Nose","Teeth" };
+
+        string[] OfficeItems = new string[] { "MotionSensor", "CodeAbecedary", "PartyHat", "RedAccesCard", "Head" };
+
+        string[] Sewersitems = new string[] { "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
+            "MetalDetector", "MedallionRat", "MedallionFish", "MedallionParrot", "PetrolCanEmpty","Bucket","Gear","GearLeverHandle" };
 
 
 
@@ -43,6 +53,8 @@ namespace InsidetheBackrooms
         bool Chamsesp = false;
         bool ItemsEsp = false;
         bool giftboxesp = false;
+        bool NumericLockesp = false;
+        bool NumericPad3esp = false;
         bool InteractablePropESP = false;
         bool SafeESP = false;
         bool DoorEsp = false;
@@ -51,8 +63,9 @@ namespace InsidetheBackrooms
         bool ElevatorEsp = false;
         bool ExitZoneEsp = false;
         bool infStamina = false;
-        bool flytest = false;
-        float fly_speed = 50f;
+        bool Godmode = false;
+        bool OldPhoneesp = false;
+
         bool GiveList = false;
         public static bool NoclipTest = false;
         private Color blackCol;
@@ -82,10 +95,18 @@ namespace InsidetheBackrooms
         public static List<Candles> Candles = new List<Candles>();
         public static List<FunLevelRoom> FunLevelRoom = new List<FunLevelRoom>();
         public static List<NetworkReparent> NetworkReparent = new List<NetworkReparent>();
-       
+        public static List<NumericLock> NumericLock = new List<NumericLock>();
+        public static List<MonsterSpawner> MonsterSpawner = new List<MonsterSpawner>();
+        public static List<NumericPad3> NumericPad3 = new List<NumericPad3>();
+        public static List<OldPhone> OldPhone = new List<OldPhone>();
+        public static List<FlyCam> FlyCam = new List<FlyCam>();
+        public static List<AirVent> AirVent = new List<AirVent>();
+        public static List<EnemySpawner> EnemySpawner = new List<EnemySpawner>();
+      
 
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
+        private int tabitem = 0; // Current tab index
         private Color backgroundColor = Color.black; // Background color
         private bool showMenu = true; // Whether to show the menu or not
         private static Camera cam;
@@ -144,6 +165,14 @@ namespace InsidetheBackrooms
                 Candles = FindObjectsOfType<Candles>().ToList();
                 FunLevelRoom = FindObjectsOfType<FunLevelRoom>().ToList();
                 NetworkReparent = FindObjectsOfType<NetworkReparent>().ToList();
+                NumericLock = FindObjectsOfType<NumericLock>().ToList();
+                MonsterSpawner = FindObjectsOfType<MonsterSpawner>().ToList();
+                NumericPad3 = FindObjectsOfType<NumericPad3>().ToList();
+                OldPhone = FindObjectsOfType<OldPhone>().ToList();
+                FlyCam = FindObjectsOfType<FlyCam>().ToList();
+                AirVent = FindObjectsOfType<AirVent>().ToList();
+                EnemySpawner = FindObjectsOfType<EnemySpawner>().ToList();
+               
                 if (Chamsesp)
                 {
                     DoChams();
@@ -169,11 +198,28 @@ namespace InsidetheBackrooms
 
 
 
+
                 }
 
 
             }
+            if (Godmode)
+            {
+                foreach (PlayerStats player in BasePlayer)
+                {
 
+
+                    player.health = float.MaxValue;
+                    player.anxiety = 0;
+                    player.m_Radiation = 0;
+                    player.m_HasEnergyBoost = !Godmode;
+                    player.m_Paralized = false;
+                    player.m_HasInvulnerability = !Godmode;
+                //    player.IsPursuitedByMonster = !Godmode;
+
+
+                }
+            }
             cam = Camera.main;
 
 
@@ -231,7 +277,14 @@ namespace InsidetheBackrooms
             {
                 tab = 3;
             }
-            
+            if (GUILayout.Toggle(tab == 4, "Level-Stuff", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tab = 4;
+            }
+            if (GUILayout.Toggle(tab == 5, "Debug", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tab = 5;
+            }
             GUILayout.EndVertical();
 
             // Display content for the selected tab
@@ -243,91 +296,58 @@ namespace InsidetheBackrooms
             switch (tab)
             {
                 case 0:
+                    GUILayout.BeginVertical(GUI.skin.box);
 
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical();
+                    Godmode = GUILayout.Toggle(Godmode, "GodMode");
                     infStamina = GUILayout.Toggle(infStamina, "infStamina");
+                    GUILayout.EndVertical();
 
-                    if (GUILayout.Button("CmdKillPlayer"))
-                    {
-                        foreach (PlayerStats player in BasePlayer)
-                        {
+                    GUILayout.Space(10);
 
-                            player.UserCode_CmdKillPlayer();
+                    GUILayout.BeginVertical();
+                    GiveList = GUILayout.Toggle(GiveList, "GiveList");
+                    GUILayout.EndVertical();
 
-                        }
-                    }
-                
-                    if (GUILayout.Button("Give List"))
-                    {
-                        GiveList = !GiveList;
-                    }
+                    GUILayout.EndHorizontal();
 
-                    //PartygoerCake
-
-                    if (GUILayout.Button("ItemDumper"))
-                    {
-
-                        StreamWriter SW = new StreamWriter("m_ItemName.txt");
-                        // Find all objects in the scene
-                        CollectableItem[] objects = FindObjectsOfType<CollectableItem>();
-
-
-
-                        // Loop through the objects and print their names to the console
-                        foreach (CollectableItem obj in objects)
-                        {
-                            SW.WriteLine(obj.m_ItemName);
-                        }
-
-                    }
+                    GUILayout.EndVertical();
 
                     break;
 
                 case 1:
-                    // Content for tab 2
-                    if (GUILayout.Button(PlayersEsp ? "Players on" : "Players off"))
-                    {
-                        PlayersEsp = !PlayersEsp;
-                    }
-                    if (GUILayout.Button(EntitysEsp ? "Entitys on" : "Entitys off"))
-                    {
-                        EntitysEsp = !EntitysEsp;
-                    }
-                    if (GUILayout.Button(ElevatorEsp ? "Elevator on" : "Elevator off"))
-                    {
-                        ElevatorEsp = !ElevatorEsp;
-                    }
-                    if (GUILayout.Button(ExitZoneEsp ? "ExitZone on" : "ExitZone off"))
-                    {
-                        ExitZoneEsp = !ExitZoneEsp;
-                    }
-                    if (GUILayout.Button(ItemsEsp ? "Items on" : "Items off"))
-                    {
-                        ItemsEsp = !ItemsEsp;
-                    }
-                    if (GUILayout.Button(giftboxesp ? "Gift on" : "Gift off"))
-                    {
-                        giftboxesp = !giftboxesp;
-                    }
-                    if (GUILayout.Button(SafeESP ? "Safe on" : "Safe off"))
-                    {
-                        SafeESP = !SafeESP;
-                    }
-                    if (GUILayout.Button(InteractablePropESP ? "Props on" : "Props off"))
-                    {
-                        InteractablePropESP = !InteractablePropESP;
-                    }
-                    if (GUILayout.Button(DoorEsp ? "Door on" : "Door off"))
-                    {
-                        DoorEsp = !DoorEsp;
-                    }
-                    if (GUILayout.Button(RespawnDoorEsp ? "RespawnDoor on" : "RespawnDoor off"))
-                    {
-                        RespawnDoorEsp = !RespawnDoorEsp;
-                    }
-                    if (GUILayout.Button(Chamsesp ? "Chams on" : "Chams off"))
-                    {
-                        Chamsesp = !Chamsesp;
-                    }
+                    GUILayout.BeginVertical(GUI.skin.box);
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical();
+                    PlayersEsp = GUILayout.Toggle(PlayersEsp, "Players");
+                    ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
+                    ItemsEsp = GUILayout.Toggle(ItemsEsp, "Items");
+                    SafeESP = GUILayout.Toggle(SafeESP, "Safe");
+                    DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
+                    Chamsesp = GUILayout.Toggle(Chamsesp, "Chams");
+                    OldPhoneesp = GUILayout.Toggle(OldPhoneesp, "OldPhone");
+                    GUILayout.EndVertical();
+
+                    GUILayout.Space(10);
+
+                    GUILayout.BeginVertical();
+                    EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
+                    ExitZoneEsp = GUILayout.Toggle(ExitZoneEsp, "ExitZone");
+                    giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
+                    InteractablePropESP = GUILayout.Toggle(InteractablePropESP, "Props");
+                    RespawnDoorEsp = GUILayout.Toggle(RespawnDoorEsp, "RespawnDoor");
+                    NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLocks");
+                    NumericPad3esp = GUILayout.Toggle(NumericPad3esp, "NumericPad");
+                    GUILayout.EndVertical();
+
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.EndVertical();
+
+
+
                     break;
                 case 2:
                     if (GUILayout.Button("safe unlock"))
@@ -474,22 +494,49 @@ namespace InsidetheBackrooms
 
                         }
                     }
-                    if (GUILayout.Button("ExitZone"))
-                    {
-                        foreach (MiscTest playerc in MiscTest)
-                        {
-                            foreach (BackroomsExitZone player in BackroomsExit)
-                            {  //player.DEVMODE_ENABLED = true;
-                                playerc.TeleportPlayer(player.teleportPoint.transform.position);
-
-                            }
-                        }
-                    }
+                   
 
 
                     break;
-               
-                   
+                case 4:
+                    if (GUILayout.Button("Close Vents<idk>"))
+                    {
+                        
+                        foreach (AirVent player in AirVent)
+                        {
+                            player.UserCode_CmdClose();
+                        }
+                    }
+
+                    break;
+                case 5:
+                    if (GUILayout.Button("CmdKillPlayer"))
+                    {
+                        foreach (PlayerStats player in BasePlayer)
+                        {
+
+                            player.UserCode_CmdKillPlayer();
+
+                        }
+                    }
+                  
+                    if (GUILayout.Button("ItemDumper"))
+                    {
+
+                        StreamWriter SW = new StreamWriter("m_ItemName.txt");
+                        // Find all objects in the scene
+                        CollectableItem[] objects = FindObjectsOfType<CollectableItem>();
+
+
+
+                        // Loop through the objects and print their names to the console
+                        foreach (CollectableItem obj in objects)
+                        {
+                            SW.WriteLine(obj.m_ItemName);
+                        }
+
+                    }
+                    break;
             }
 
             GUILayout.EndVertical();
@@ -501,30 +548,165 @@ namespace InsidetheBackrooms
         private static Rect Itemgivewindow = new Rect(60f, 250f, 400, 400);
         public void GiveitemsWindow(int windowID)
         {
+            GUILayout.BeginHorizontal();
 
-            // Begin a scroll view to allow scrolling through the button list
-            scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
 
-            // Create a button for each option in the options array
-            for (int i = 0; i < itemNames.Length; i++)
+            if (GUILayout.Toggle(tabitem == 0, "All-items", "Button", GUILayout.ExpandWidth(true)))
             {
-                if (GUILayout.Button(itemNames[i]))
-                {
-                    // Get the selected location from the locations array
-                    string selectedLocation = itemNames[i];
+                tabitem = 0;
+            }
+            if (GUILayout.Toggle(tabitem == 1, "Booster/Assisting", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tabitem = 1;
+            }
+            if (GUILayout.Toggle(tabitem == 2, "Dark/Parking", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tabitem = 2;
+            }
+            if (GUILayout.Toggle(tabitem == 3, "Office", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tabitem = 3;
+            }
+            if (GUILayout.Toggle(tabitem == 4, "Sewers", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tabitem = 4;
+            }
+            GUILayout.EndHorizontal();
 
-                    foreach (NetworkReparent playert in NetworkReparent)
+
+
+
+            switch (tabitem)
+            {
+                case 0:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < itemNames.Length; i++)
                     {
-                        foreach (MiscTest player in MiscTest)
+                        if (GUILayout.Button(itemNames[i]))
                         {
-                            //player.DEVMODE_ENABLED = true;
-                            player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+                            // Get the selected location from the locations array
+                            string selectedLocation = itemNames[i];
 
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
                         }
                     }
-                }
+                    GUILayout.EndScrollView();
+                    break;
+                case 1:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < Boosteritem.Length; i++)
+                    {
+                        if (GUILayout.Button(Boosteritem[i]))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = Boosteritem[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+                    GUILayout.EndScrollView();
+
+                    break;
+                case 2:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < DarkRoomsParking.Length; i++)
+                    {
+                        if (GUILayout.Button(DarkRoomsParking[i]))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = DarkRoomsParking[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+                    GUILayout.EndScrollView();
+
+                    break;
+                case 3:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < OfficeItems.Length; i++)
+                    {
+                        if (GUILayout.Button(OfficeItems[i]))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = OfficeItems[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+                    GUILayout.EndScrollView();
+                    break;
+                case 4:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < Sewersitems.Length; i++)
+                    {
+                        if (GUILayout.Button(Sewersitems[i]))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = Sewersitems[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+                    GUILayout.EndScrollView();
+                    break;
             }
-            GUILayout.EndScrollView();
+
 
             GUI.DragWindow(); // Allow the user to drag the window around
 
@@ -604,7 +786,7 @@ namespace InsidetheBackrooms
         }
         public override void OnGUI()
         {
-           
+
 
             if (showMenu) // Only draw the menu when showMenu is true
             {
@@ -637,13 +819,31 @@ namespace InsidetheBackrooms
                         ESPUtils.DrawAllBones(GetAllBones(player.PlayerAnimator), Color.green);
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.components.Info.Networkm_PlayerName + "\n" + "Hidding: " + player.IsHidding + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.green, true, 12, FontStyle.Bold);
+                       player.components.Info.m_PlayerName + "\n" + "Hidding: " + player.IsHidding + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.green, true, 12, FontStyle.Bold);
                     }
 
                 }
 
             }
+            if(OldPhoneesp)
+            {
+                foreach (OldPhone player in OldPhone)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+
+
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.magenta, true, 12, FontStyle.Bold);
+                    }
+                }
+
+
+
+            }
             if (ExitZoneEsp)
             {
                 foreach (BackroomsExitZone player in BackroomsExit)
@@ -688,6 +888,7 @@ namespace InsidetheBackrooms
 
                     if (ESPUtils.IsOnScreen(w2s) && DistanceFromCamera(player.transform.position) < 80)
                     {
+                    
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                         player.m_ItemName, Color.blue, true, 12, FontStyle.Bold);
@@ -794,30 +995,61 @@ namespace InsidetheBackrooms
                 }
 
             }
-            if (EntitysEsp)
+            if (NumericLockesp)
+            {
+                foreach (NumericLock player in NumericLock)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       "Pad-lock" + "\n" + "Code: " + player.m_NeededCode, Color.cyan, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            }
+            if (NumericPad3esp)
+            {
+                foreach (NumericPad3 player in NumericPad3)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       "Pad" + "\n" + "Code: " + player.m_CorrectCode, Color.cyan, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            } 
+
+
+
+        
+                    if (EntitysEsp)
             {
                 foreach (BaseAIEntity player in BaseAI)
                 {
 
 
 
-                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+                    Vector3 w2s = Camera.main.WorldToScreenPoint(player.transform.position);
+
+                  
 
                     if (ESPUtils.IsOnScreen(w2s))
                     {
 
+                           Vector3 p = player.transform.position;
+                           Vector3 s = player.transform.localScale;
+                           if (p != null & s != null)
+                              ESPUtils.Draw3DBox(new Bounds(p + new Vector3(0, 1.1f, 0), s + new Vector3(0, .95f, 0)), Color.red);
 
-
-                        //     ESPUtils.DrawAllBones(GetAllBones(player.b), Color.red);
-
-                        Vector3 p = player.transform.position;
-                        Vector3 s = player.transform.localScale;
-                        if (p != null & s != null)
-                            ESPUtils.Draw3DBox(new Bounds(p + new Vector3(0, 1.1f, 0), s + new Vector3(0, .95f, 0)), Color.red);
-
+                  
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                          player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}" + "\n" + "State: " + player.State, Color.red, true, 12, FontStyle.Bold);
+                          player.name.Replace("(Clone)", "") +  "\n" + "State: " + player.State + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.red, true, 12, FontStyle.Bold);
 
 
                     }
