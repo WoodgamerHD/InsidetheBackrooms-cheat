@@ -47,6 +47,8 @@ namespace InsidetheBackrooms
         string[] Sewersitems = new string[] { "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
             "MetalDetector", "MedallionRat", "MedallionFish", "MedallionParrot", "PetrolCanEmpty","Bucket","Gear","GearLeverHandle" };
 
+        string[] terrorhotelitems = new string[] { "Ingot6", "Ingot8", "Ingot10", "StatueFace", "StorageKey", "VyniiDish", "Candle", "BoilerRoomKeys", "Pipe", "CurvedPipe", "MothCoccoon" };
+
 
 
         bool EntitysEsp = false;
@@ -555,11 +557,11 @@ namespace InsidetheBackrooms
             {
                 tabitem = 0;
             }
-            if (GUILayout.Toggle(tabitem == 1, "Booster/Assisting", "Button", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Toggle(tabitem == 1, "Aid", "Button", GUILayout.ExpandWidth(true)))
             {
                 tabitem = 1;
             }
-            if (GUILayout.Toggle(tabitem == 2, "Dark/Parking", "Button", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Toggle(tabitem == 2, "Parking", "Button", GUILayout.ExpandWidth(true)))
             {
                 tabitem = 2;
             }
@@ -570,6 +572,10 @@ namespace InsidetheBackrooms
             if (GUILayout.Toggle(tabitem == 4, "Sewers", "Button", GUILayout.ExpandWidth(true)))
             {
                 tabitem = 4;
+            }
+            if (GUILayout.Toggle(tab == 5, "Hotel", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tabitem = 5;
             }
             GUILayout.EndHorizontal();
 
@@ -703,6 +709,32 @@ namespace InsidetheBackrooms
                             }
                         }
                     }
+                    GUILayout.EndScrollView();
+                    break;
+                case 5:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+                 
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < terrorhotelitems.Length; i++)
+                    {
+                        if (GUILayout.Button(terrorhotelitems[i], GUILayout.ExpandWidth(true)))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = terrorhotelitems[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+                                    //player.DEVMODE_ENABLED = true;
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+                   
                     GUILayout.EndScrollView();
                     break;
             }
