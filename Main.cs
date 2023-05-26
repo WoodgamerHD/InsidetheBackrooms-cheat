@@ -67,6 +67,8 @@ namespace InsidetheBackrooms
         bool infStamina = false;
         bool Godmode = false;
         bool OldPhoneesp = false;
+        bool Computeresp = false;
+        bool LetterLockesp = false;
 
         bool GiveList = false;
         public static bool NoclipTest = false;
@@ -104,10 +106,13 @@ namespace InsidetheBackrooms
         public static List<FlyCam> FlyCam = new List<FlyCam>();
         public static List<AirVent> AirVent = new List<AirVent>();
         public static List<EnemySpawner> EnemySpawner = new List<EnemySpawner>();
+        public static List<ComputersScreenPuzzle> ComputersScreenPuzzle = new List<ComputersScreenPuzzle>();
+        public static List<LetterLock> LetterLock = new List<LetterLock>();
       
 
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
+        private int tab2 = 0; // Current tab index
         private int tabitem = 0; // Current tab index
         private Color backgroundColor = Color.black; // Background color
         private bool showMenu = true; // Whether to show the menu or not
@@ -174,12 +179,10 @@ namespace InsidetheBackrooms
                 FlyCam = FindObjectsOfType<FlyCam>().ToList();
                 AirVent = FindObjectsOfType<AirVent>().ToList();
                 EnemySpawner = FindObjectsOfType<EnemySpawner>().ToList();
+                ComputersScreenPuzzle = FindObjectsOfType<ComputersScreenPuzzle>().ToList();
+                LetterLock = FindObjectsOfType<LetterLock>().ToList();
                
-                if (Chamsesp)
-                {
-                    DoChams();
-                }
-
+                
                 natNextUpdateTime = 0f;
             }
 
@@ -190,6 +193,10 @@ namespace InsidetheBackrooms
             {
                 showMenu = !showMenu;
 
+            }
+            if(Keyboard.current.pKey.wasPressedThisFrame)
+            {
+                showMenu = !showMenu;
             }
             if (infStamina)
             {
@@ -319,37 +326,72 @@ namespace InsidetheBackrooms
                     break;
 
                 case 1:
-                    GUILayout.BeginVertical(GUI.skin.box);
 
                     GUILayout.BeginHorizontal();
-                    GUILayout.BeginVertical();
-                    PlayersEsp = GUILayout.Toggle(PlayersEsp, "Players");
-                    ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
-                    ItemsEsp = GUILayout.Toggle(ItemsEsp, "Items");
-                    SafeESP = GUILayout.Toggle(SafeESP, "Safe");
-                    DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
-                    Chamsesp = GUILayout.Toggle(Chamsesp, "Chams");
-                    OldPhoneesp = GUILayout.Toggle(OldPhoneesp, "OldPhone");
-                    GUILayout.EndVertical();
+                    if (GUILayout.Toggle(tab2 == 0, "Main", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab2 = 0;
+                    }
 
-                    GUILayout.Space(10);
-
-                    GUILayout.BeginVertical();
-                    EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
-                    ExitZoneEsp = GUILayout.Toggle(ExitZoneEsp, "ExitZone");
-                    giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
-                    InteractablePropESP = GUILayout.Toggle(InteractablePropESP, "Props");
-                    RespawnDoorEsp = GUILayout.Toggle(RespawnDoorEsp, "RespawnDoor");
-                    NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLocks");
-                    NumericPad3esp = GUILayout.Toggle(NumericPad3esp, "NumericPad");
-                    GUILayout.EndVertical();
-
+                    if (GUILayout.Toggle(tab2 == 1, "Locks", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab2 = 1;
+                    }
                     GUILayout.EndHorizontal();
 
-                    GUILayout.EndVertical();
+                    switch (tab2)
+                    {
+                        case 0:
+                            GUILayout.BeginVertical(GUI.skin.box);
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.BeginVertical();
+                            PlayersEsp = GUILayout.Toggle(PlayersEsp, "Players");
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.Space(10);
+
+                            GUILayout.BeginVertical();
+                            EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
+                            GUILayout.EndVertical();
+
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
+                            break;
+                          
+                        case 1:
+                            GUILayout.BeginVertical(GUI.skin.box);
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.BeginVertical();
+                            LetterLockesp = GUILayout.Toggle(LetterLockesp, "LetterLock");
+                            Computeresp = GUILayout.Toggle(Computeresp, "Computer");
+                            giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.Space(10);
+
+                            GUILayout.BeginVertical();
+                            ItemsEsp = GUILayout.Toggle(ItemsEsp, "Items");
+                            SafeESP = GUILayout.Toggle(SafeESP, "Safe");
+                            ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
+                            DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
+                            GUILayout.EndVertical();
+
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
 
 
+                            break;
 
+                           
+
+                    }
+                  
                     break;
                 case 2:
                     if (GUILayout.Button("safe unlock"))
@@ -521,7 +563,15 @@ namespace InsidetheBackrooms
 
                         }
                     }
-                  
+                    if (GUILayout.Button("DoRespawn"))
+                    {
+                        foreach (RespawnDoor player in RespawnDoor)
+                        {
+
+                            player.DoRespawn();
+
+                        }
+                    }
                     if (GUILayout.Button("ItemDumper"))
                     {
 
@@ -961,7 +1011,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        player.name.Replace("(Clone)", "") + "\n", Color.cyan, true, 12, FontStyle.Bold);
+                        player.name.Replace("(Clone)", "") + "\n", Color.blue, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1054,12 +1104,38 @@ namespace InsidetheBackrooms
                     }
 
                 }
-            } 
+            }
+            if (Computeresp)
+            {
+                foreach (ComputersScreenPuzzle player in ComputersScreenPuzzle)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       "Computer" + "\n" + "Code: " + player.m_PuzzleCode, Color.cyan, true, 12, FontStyle.Bold);
+                    }
 
+                }
+            }
 
-        
-                    if (EntitysEsp)
+            if (LetterLockesp)
+            {
+                foreach (LetterLock player in LetterLock)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       "Letter-Lock" + "\n" + "Code: " + player.m_CorrectCode, Color.cyan, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            }
+
+            if (EntitysEsp)
             {
                 foreach (BaseAIEntity player in BaseAI)
                 {
