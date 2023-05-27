@@ -52,6 +52,7 @@ namespace InsidetheBackrooms
 
 
         bool EntitysEsp = false;
+       
         bool Chamsesp = false;
         bool ItemsEsp = false;
         bool giftboxesp = false;
@@ -77,6 +78,7 @@ namespace InsidetheBackrooms
         public static List<BaseAIEntity> BaseAI = new List<BaseAIEntity>();
         public static List<HumanDogAI> BaseAIHumanDogAI = new List<HumanDogAI>();
         public static List<PlayerController> Player = new List<PlayerController>();
+        public static List<Light> light = new List<Light>();
         public static List<GridButtonPadlock> Elev = new List<GridButtonPadlock>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
         public static List<CollectableItem> ItemObj = new List<CollectableItem>();
@@ -140,7 +142,7 @@ namespace InsidetheBackrooms
             }
         }
 
-
+   
 
         public override void OnUpdate()
         {
@@ -181,6 +183,7 @@ namespace InsidetheBackrooms
                 EnemySpawner = FindObjectsOfType<EnemySpawner>().ToList();
                 ComputersScreenPuzzle = FindObjectsOfType<ComputersScreenPuzzle>().ToList();
                 LetterLock = FindObjectsOfType<LetterLock>().ToList();
+                light = FindObjectsOfType<Light>().ToList();
                
                 
                 natNextUpdateTime = 0f;
@@ -198,6 +201,7 @@ namespace InsidetheBackrooms
             {
                 showMenu = !showMenu;
             }
+          
             if (infStamina)
             {
                 foreach (PlayerStats player in BasePlayer)
@@ -229,6 +233,10 @@ namespace InsidetheBackrooms
 
                 }
             }
+
+            
+
+
             cam = Camera.main;
 
 
@@ -250,7 +258,8 @@ namespace InsidetheBackrooms
             {
                 hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy
             };
-
+            //Unlit/Color Shader
+          
 
             chamsMaterial.SetInt("_Cull", 0);
             chamsMaterial.SetInt("_ZTest", 8); // 8 = see through walls.
@@ -354,6 +363,7 @@ namespace InsidetheBackrooms
 
                             GUILayout.BeginVertical();
                             EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
+                           
                             GUILayout.EndVertical();
 
                             GUILayout.EndHorizontal();
@@ -369,6 +379,7 @@ namespace InsidetheBackrooms
                             LetterLockesp = GUILayout.Toggle(LetterLockesp, "LetterLock");
                             Computeresp = GUILayout.Toggle(Computeresp, "Computer");
                             giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
+                            NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLock");
 
                             GUILayout.EndVertical();
 
@@ -379,6 +390,7 @@ namespace InsidetheBackrooms
                             SafeESP = GUILayout.Toggle(SafeESP, "Safe");
                             ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
                             DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
+                            NumericPad3esp = GUILayout.Toggle(NumericPad3esp, "NumericPad");
                             GUILayout.EndVertical();
 
                             GUILayout.EndHorizontal();
@@ -572,6 +584,7 @@ namespace InsidetheBackrooms
 
                         }
                     }
+                  
                     if (GUILayout.Button("ItemDumper"))
                     {
 
@@ -869,7 +882,7 @@ namespace InsidetheBackrooms
         public override void OnGUI()
         {
 
-
+            
             if (showMenu) // Only draw the menu when showMenu is true
             {
                 // Set the background color
@@ -884,9 +897,9 @@ namespace InsidetheBackrooms
                 }
 
             }
-
-
-
+      
+          
+                
             if (PlayersEsp)
             {
                 foreach (PlayerController player in Player)
