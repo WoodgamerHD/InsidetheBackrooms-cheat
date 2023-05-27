@@ -70,15 +70,18 @@ namespace InsidetheBackrooms
         bool OldPhoneesp = false;
         bool Computeresp = false;
         bool LetterLockesp = false;
+        bool Clockesp = false;
+        bool entitytest = false;
 
         bool GiveList = false;
         public static bool NoclipTest = false;
         private Color blackCol;
         private Color entityBoxCol;
         public static List<BaseAIEntity> BaseAI = new List<BaseAIEntity>();
+        public static List<AbstractEntityAI> AbstractEntityAI = new List<AbstractEntityAI>();
         public static List<HumanDogAI> BaseAIHumanDogAI = new List<HumanDogAI>();
         public static List<PlayerController> Player = new List<PlayerController>();
-        public static List<Light> light = new List<Light>();
+       // public static List<Light> light = new List<Light>();
         public static List<GridButtonPadlock> Elev = new List<GridButtonPadlock>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
         public static List<CollectableItem> ItemObj = new List<CollectableItem>();
@@ -110,6 +113,9 @@ namespace InsidetheBackrooms
         public static List<EnemySpawner> EnemySpawner = new List<EnemySpawner>();
         public static List<ComputersScreenPuzzle> ComputersScreenPuzzle = new List<ComputersScreenPuzzle>();
         public static List<LetterLock> LetterLock = new List<LetterLock>();
+      //  public static List<SmilerAI> SmilerAI = new List<SmilerAI>();
+        public static List<ClockPuzzle> ClockPuzzle = new List<ClockPuzzle>();
+        public static List<FuseBox> FuseBox = new List<FuseBox>();
       
 
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
@@ -183,7 +189,11 @@ namespace InsidetheBackrooms
                 EnemySpawner = FindObjectsOfType<EnemySpawner>().ToList();
                 ComputersScreenPuzzle = FindObjectsOfType<ComputersScreenPuzzle>().ToList();
                 LetterLock = FindObjectsOfType<LetterLock>().ToList();
-                light = FindObjectsOfType<Light>().ToList();
+                ClockPuzzle = FindObjectsOfType<ClockPuzzle>().ToList();
+                AbstractEntityAI = FindObjectsOfType<AbstractEntityAI>().ToList();
+                FuseBox = FindObjectsOfType<FuseBox>().ToList();
+             //   light = FindObjectsOfType<Light>().ToList();
+              //  SmilerAI = FindObjectsOfType<SmilerAI>().ToList();
                
                 
                 natNextUpdateTime = 0f;
@@ -220,17 +230,15 @@ namespace InsidetheBackrooms
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
+                        player.health = float.MaxValue;
+                        player.anxiety = 0;
+                        player.m_Radiation = 0;
+                        player.m_HasEnergyBoost = !Godmode;
+                        player.m_Paralized = false;
+                        player.m_HasInvulnerability = !Godmode;
+                        //    player.IsPursuitedByMonster = !Godmode;
 
-
-                    player.health = float.MaxValue;
-                    player.anxiety = 0;
-                    player.m_Radiation = 0;
-                    player.m_HasEnergyBoost = !Godmode;
-                    player.m_Paralized = false;
-                    player.m_HasInvulnerability = !Godmode;
-                //    player.IsPursuitedByMonster = !Godmode;
-
-
+                     
                 }
             }
 
@@ -318,7 +326,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical();
-                    Godmode = GUILayout.Toggle(Godmode, "GodMode");
+                    Godmode = GUILayout.Toggle(Godmode, "GodMode<doesnoworkonsmiller>");
                     infStamina = GUILayout.Toggle(infStamina, "infStamina");
                     GUILayout.EndVertical();
 
@@ -380,6 +388,8 @@ namespace InsidetheBackrooms
                             Computeresp = GUILayout.Toggle(Computeresp, "Computer");
                             giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
                             NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLock");
+                            RespawnDoorEsp = GUILayout.Toggle(RespawnDoorEsp, "RespawnDoor");
+                            Clockesp = GUILayout.Toggle(Clockesp, "Clock");
 
                             GUILayout.EndVertical();
 
@@ -564,6 +574,15 @@ namespace InsidetheBackrooms
                         }
                     }
 
+                    //FuseBox
+                    if (GUILayout.Button("Add-Fuses-to-Box"))
+                    {
+
+                        foreach (FuseBox player in FuseBox)
+                        {
+                            player.UserCode_RpcAddFuse();
+                        }
+                    }
                     break;
                 case 5:
                     if (GUILayout.Button("CmdKillPlayer"))
@@ -969,7 +988,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.m_InternalElevatorCode, Color.magenta, true, 12, FontStyle.Bold);
+                       player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.m_InternalElevatorCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.magenta, true, 12, FontStyle.Bold);
                     }
                 }
             }
@@ -1005,7 +1024,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        player.name.Replace("(Clone)", "") + "\n", Color.yellow, true, 12, FontStyle.Bold);
+                        player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.yellow, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1024,7 +1043,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        player.name.Replace("(Clone)", "") + "\n", Color.blue, true, 12, FontStyle.Bold);
+                        player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.blue, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1041,7 +1060,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.UnlockCode, Color.cyan, true, 12, FontStyle.Bold);
+                        player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.UnlockCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1062,7 +1081,7 @@ namespace InsidetheBackrooms
 
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        "Respawn Door" + "\n", Color.yellow, true, 12, FontStyle.Bold);
+                        "Respawn Door" + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.yellow, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1082,7 +1101,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        "End Door" + "\n", Color.cyan, true, 12, FontStyle.Bold);
+                        "End Door" + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
 
 
                     }
@@ -1099,7 +1118,7 @@ namespace InsidetheBackrooms
                     if (ESPUtils.IsOnScreen(w2s))
                     {
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       "Pad-lock" + "\n" + "Code: " + player.m_NeededCode, Color.cyan, true, 12, FontStyle.Bold);
+                       "Pad-lock" + "\n" + "Code: " + player.m_NeededCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
                     }
 
                 }
@@ -1113,7 +1132,21 @@ namespace InsidetheBackrooms
                     if (ESPUtils.IsOnScreen(w2s))
                     {
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       "Pad" + "\n" + "Code: " + player.m_CorrectCode, Color.cyan, true, 12, FontStyle.Bold);
+                       "Pad" + "\n" + "Code: " + player.m_CorrectCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            }
+            if (Clockesp)
+            {
+                foreach (ClockPuzzle player in ClockPuzzle)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       "Clock" + "\n" + "Hour: " + player.GetHourText() + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
                     }
 
                 }
@@ -1127,7 +1160,7 @@ namespace InsidetheBackrooms
                     if (ESPUtils.IsOnScreen(w2s))
                     {
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       "Computer" + "\n" + "Code: " + player.m_PuzzleCode, Color.cyan, true, 12, FontStyle.Bold);
+                       "Computer" + "\n" + "Code: " + player.m_PuzzleCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
                     }
 
                 }
@@ -1142,11 +1175,14 @@ namespace InsidetheBackrooms
                     if (ESPUtils.IsOnScreen(w2s))
                     {
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       "Letter-Lock" + "\n" + "Code: " + player.m_CorrectCode, Color.cyan, true, 12, FontStyle.Bold);
+                       "Letter-Lock" + "\n" + "Code: " + player.m_CorrectCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.cyan, true, 12, FontStyle.Bold);
                     }
 
                 }
             }
+
+         
+
 
             if (EntitysEsp)
             {
