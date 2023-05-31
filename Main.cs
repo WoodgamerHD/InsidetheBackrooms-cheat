@@ -6,12 +6,6 @@ using Il2Cpp;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
-
-using System.Collections;
-using Il2CppCrosstales.Common.Util;
-using UnityEngine.Events;
-using System;
-
 namespace InsidetheBackrooms
 {
     public static class BuildInfo
@@ -63,15 +57,18 @@ namespace InsidetheBackrooms
         bool DoorEsp = false;
         bool RespawnDoorEsp = false;
         bool PlayersEsp = false;
+        bool GhostPlayersEsp = false;
         bool ElevatorEsp = false;
         bool ExitZoneEsp = false;
         bool infStamina = false;
         bool Godmode = false;
-        bool OldPhoneesp = false;
+     
         bool Computeresp = false;
         bool LetterLockesp = false;
+        bool LeverDoorLockesp = false;
         bool Clockesp = false;
-        bool entitytest = false;
+        bool Boxtoggle = false;
+     
 
         bool GiveList = false;
         public static bool NoclipTest = false;
@@ -81,6 +78,7 @@ namespace InsidetheBackrooms
         public static List<AbstractEntityAI> AbstractEntityAI = new List<AbstractEntityAI>();
         public static List<HumanDogAI> BaseAIHumanDogAI = new List<HumanDogAI>();
         public static List<PlayerController> Player = new List<PlayerController>();
+        public static List<GhostPlayerController> GhostPlayer = new List<GhostPlayerController>();
        // public static List<Light> light = new List<Light>();
         public static List<GridButtonPadlock> Elev = new List<GridButtonPadlock>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
@@ -116,7 +114,17 @@ namespace InsidetheBackrooms
       //  public static List<SmilerAI> SmilerAI = new List<SmilerAI>();
         public static List<ClockPuzzle> ClockPuzzle = new List<ClockPuzzle>();
         public static List<FuseBox> FuseBox = new List<FuseBox>();
-      
+        public static List<InstantDamageTrigger> InstantDamageTrigger = new List<InstantDamageTrigger>();
+        public static List<ColorLeverDoorLock> ColorLeverDoorLock = new List<ColorLeverDoorLock>();
+        public static List<GearPuzzle> GearPuzzle = new List<GearPuzzle>();
+
+        public static Color TestColor
+        {
+            get
+            {
+                return new Color(1.2f, 3f, 4.1f, 1f);
+            }
+        }
 
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
@@ -127,6 +135,8 @@ namespace InsidetheBackrooms
         private static Camera cam;
         float natNextUpdateTime;
         private static Material chamsMaterial;
+        private static Material xray;
+        private static Material smooth;
         public float verticalMovement = 10f;
 
         public static void DoChams()
@@ -142,7 +152,7 @@ namespace InsidetheBackrooms
                 {
 
 
-                    renderer.material = chamsMaterial;
+                    renderer.material = xray;
 
                 }
             }
@@ -192,10 +202,20 @@ namespace InsidetheBackrooms
                 ClockPuzzle = FindObjectsOfType<ClockPuzzle>().ToList();
                 AbstractEntityAI = FindObjectsOfType<AbstractEntityAI>().ToList();
                 FuseBox = FindObjectsOfType<FuseBox>().ToList();
+                InstantDamageTrigger = FindObjectsOfType<InstantDamageTrigger>().ToList();
+                ColorLeverDoorLock = FindObjectsOfType<ColorLeverDoorLock>().ToList();
+                GearPuzzle = FindObjectsOfType<GearPuzzle>().ToList();
+                GhostPlayer = FindObjectsOfType<GhostPlayerController>().ToList();
+               
              //   light = FindObjectsOfType<Light>().ToList();
               //  SmilerAI = FindObjectsOfType<SmilerAI>().ToList();
                
                 
+                if(Chamsesp)
+                {
+                    DoChams();
+                }
+
                 natNextUpdateTime = 0f;
             }
 
@@ -230,22 +250,23 @@ namespace InsidetheBackrooms
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
+                 
                         player.health = float.MaxValue;
                         player.anxiety = 0;
                         player.m_Radiation = 0;
                         player.m_HasEnergyBoost = !Godmode;
                         player.m_Paralized = false;
                         player.m_HasInvulnerability = !Godmode;
-                        //    player.IsPursuitedByMonster = !Godmode;
+                        player.Networkm_HasInvulnerability = !Godmode;
+                   //     player.CmdTakeDamage(0);
 
+                  
                      
                 }
             }
+          
 
-            
-
-
-            cam = Camera.main;
+                cam = Camera.main;
 
 
         }
@@ -258,6 +279,7 @@ namespace InsidetheBackrooms
             windowRect.x = (Screen.width - windowRect.width) / 2;
             windowRect.y = (Screen.height - windowRect.height) / 2;
 
+          
 
             // MelonCoroutines.Start(UpdateObjects());
 
@@ -272,8 +294,22 @@ namespace InsidetheBackrooms
             chamsMaterial.SetInt("_Cull", 0);
             chamsMaterial.SetInt("_ZTest", 8); // 8 = see through walls.
             chamsMaterial.SetInt("_ZWrite", 0);
-            chamsMaterial.SetColor("_Color", Color.red);
+            chamsMaterial.SetInt("_ZBias", 0);
+            chamsMaterial.SetColor("_Color", Color.cyan);
 
+            xray = new Material(Shader.Find("Hidden/Internal-Colored"))
+            {
+                hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset
+             };
+
+            xray.SetInt("_ZTest", 8);
+            xray.SetColor("_Color", Color.green);
+
+
+            smooth = new Material(Shader.Find("Hidden/InternalErrorShader"))
+            {
+                hideFlags = HideFlags.NotEditable | HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy
+            };
 
             blackCol = new Color(0f, 0f, 0f, 120f);
             entityBoxCol = new Color(1.42f, 0f, 0f, 1f);
@@ -326,7 +362,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginHorizontal();
                     GUILayout.BeginVertical();
-                    Godmode = GUILayout.Toggle(Godmode, "GodMode<doesnoworkonsmiller>");
+                    Godmode = GUILayout.Toggle(Godmode, "GodMode<WIP>");
                     infStamina = GUILayout.Toggle(infStamina, "infStamina");
                     GUILayout.EndVertical();
 
@@ -334,6 +370,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
+                  
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
@@ -364,6 +401,7 @@ namespace InsidetheBackrooms
                             GUILayout.BeginHorizontal();
                             GUILayout.BeginVertical();
                             PlayersEsp = GUILayout.Toggle(PlayersEsp, "Players");
+                            GhostPlayersEsp = GUILayout.Toggle(GhostPlayersEsp, "GhostPlayers");
 
                             GUILayout.EndVertical();
 
@@ -371,6 +409,8 @@ namespace InsidetheBackrooms
 
                             GUILayout.BeginVertical();
                             EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
+                            Chamsesp = GUILayout.Toggle(Chamsesp, "Chams");
+                            Boxtoggle = GUILayout.Toggle(Boxtoggle, "Box");
                            
                             GUILayout.EndVertical();
 
@@ -401,6 +441,7 @@ namespace InsidetheBackrooms
                             ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
                             DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
                             NumericPad3esp = GUILayout.Toggle(NumericPad3esp, "NumericPad");
+                            LeverDoorLockesp = GUILayout.Toggle(LeverDoorLockesp, "LeverDoor");
                             GUILayout.EndVertical();
 
                             GUILayout.EndHorizontal();
@@ -475,6 +516,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
+
                             //player.DEVMODE_ENABLED = true;
                             player.TeleportPlayer(player.funLevelPos.transform.position);
 
@@ -575,12 +617,14 @@ namespace InsidetheBackrooms
                     }
 
                     //FuseBox
-                    if (GUILayout.Button("Add-Fuses-to-Box"))
+                    if (GUILayout.Button("Add-Fuses-to-Box<wip>"))
                     {
 
                         foreach (FuseBox player in FuseBox)
                         {
                             player.UserCode_RpcAddFuse();
+                            player.RpcAddFuse();
+                            player.UserCode_CmdAddFuse__NetworkIdentity(Il2CppMirror.NetworkIdentity.previousLocalPlayer);
                         }
                     }
                     break;
@@ -900,8 +944,10 @@ namespace InsidetheBackrooms
         }
         public override void OnGUI()
         {
+          
+          //  Il2CppMeshCombineStudio.Console.instance.consoleKey = KeyCode.Tab;
 
-            
+
             if (showMenu) // Only draw the menu when showMenu is true
             {
                 // Set the background color
@@ -927,21 +973,21 @@ namespace InsidetheBackrooms
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
 
-                    if (ESPUtils.IsOnScreen(w2s))
+                    if (ESPUtils.IsOnScreen(w2s) && !player.isLocalPlayer)
                     {
 
                         ESPUtils.DrawAllBones(GetAllBones(player.PlayerAnimator), Color.green);
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.components.Info.m_PlayerName + "\n" + "Hidding: " + player.IsHidding + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.green, true, 12, FontStyle.Bold);
+                       player.components.Info.m_PlayerName + "\n" + "Hidding: " + player.IsHidding + "\n" + "Rank: " + player.components.Info.PlayerEmblem + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.green, true, 12, FontStyle.Bold);
                     }
 
                 }
 
             }
-            if(OldPhoneesp)
+            if(GhostPlayersEsp)
             {
-                foreach (OldPhone player in OldPhone)
+                foreach (GhostPlayerController player in GhostPlayer)
                 {
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
@@ -949,9 +995,10 @@ namespace InsidetheBackrooms
                     if (ESPUtils.IsOnScreen(w2s))
                     {
 
+                        ESPUtils.DrawAllBones(GetAllBones(player.PlayerAnimator), TestColor);
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.magenta, true, 12, FontStyle.Bold);
+                       player.m_PlayerName + "\n" + "Ghost" + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", TestColor, true, 12, FontStyle.Bold);
                     }
                 }
 
@@ -1180,7 +1227,6 @@ namespace InsidetheBackrooms
 
                 }
             }
-
          
 
 
@@ -1191,18 +1237,19 @@ namespace InsidetheBackrooms
 
 
 
-                    Vector3 w2s = Camera.main.WorldToScreenPoint(player.transform.position);
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
                   
 
                     if (ESPUtils.IsOnScreen(w2s))
                     {
-
-                           Vector3 p = player.transform.position;
-                           Vector3 s = player.transform.localScale;
-                           if (p != null & s != null)
-                              ESPUtils.Draw3DBox(new Bounds(p + new Vector3(0, 1.1f, 0), s + new Vector3(0, .95f, 0)), Color.red);
-
+                        if (Boxtoggle)
+                        {
+                            Vector3 p = player.transform.position;
+                            Vector3 s = player.transform.localScale;
+                            if (p != null & s != null)
+                                ESPUtils.Draw3DBox(new Bounds(p + new Vector3(0, 1.1f, 0), s + new Vector3(0, .95f, 0)), Color.red);
+                        }
                   
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
