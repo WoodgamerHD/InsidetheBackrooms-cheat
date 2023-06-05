@@ -19,7 +19,11 @@ namespace InsidetheBackrooms
     }
 
     public class InsidetheBackrooms : MelonPlugin
-    {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //new                                                                                    
+    {
+        private string saveFilePath = "config.txt"; // File path to save the configuration
+
+
+        //new                                                                                    
         string[] itemNames = new string[]
 {
     "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe", "Ear",
@@ -45,32 +49,32 @@ namespace InsidetheBackrooms
 
 
 
-        bool EntitysEsp = false;
        
-        bool Chamsesp = false;
-        bool ItemsEsp = false;
-        bool giftboxesp = false;
-        bool NumericLockesp = false;
-        bool NumericPad3esp = false;
-        bool InteractablePropESP = false;
-        bool SafeESP = false;
-        bool DoorEsp = false;
-        bool RespawnDoorEsp = false;
-        bool PlayersEsp = false;
-        bool GhostPlayersEsp = false;
-        bool ElevatorEsp = false;
-        bool ExitZoneEsp = false;
-        bool infStamina = false;
-        bool Godmode = false;
-     
-        bool Computeresp = false;
-        bool LetterLockesp = false;
-        bool LeverDoorLockesp = false;
-        bool Clockesp = false;
-        bool Boxtoggle = false;
-     
+        private bool EntitysEsp = false;
+        private bool Chamsesp = false;
+        private bool ItemsEsp = false;
+        private bool giftboxesp = false;
+        private bool NumericLockesp = false;
+        private bool NumericPad3esp = false;
+        private bool InteractablePropESP = false;
+        private bool SafeESP = false;
+        private bool DoorEsp = false;
+        private bool RespawnDoorEsp = false;
+        private bool PlayersEsp = false;
+        private bool GhostPlayersEsp = false;
+        private bool ElevatorEsp = false;
+        private bool ExitZoneEsp = false;
+        private bool infStamina = false;
+        private bool Godmode = false;
+        private bool Computeresp = false;
+        private bool LetterLockesp = false;
+        private bool LeverDoorLockesp = false;
+        private bool Clockesp = false;
+        private bool Boxtoggle = false;
 
-        bool GiveList = false;
+        private bool GiveList = false;
+
+
         public static bool NoclipTest = false;
         private Color blackCol;
         private Color entityBoxCol;
@@ -117,6 +121,8 @@ namespace InsidetheBackrooms
         public static List<InstantDamageTrigger> InstantDamageTrigger = new List<InstantDamageTrigger>();
         public static List<ColorLeverDoorLock> ColorLeverDoorLock = new List<ColorLeverDoorLock>();
         public static List<GearPuzzle> GearPuzzle = new List<GearPuzzle>();
+        public static List<JumspcareTest> JumspcareTest = new List<JumspcareTest>();
+        public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
 
         public static Color TestColor
         {
@@ -206,6 +212,8 @@ namespace InsidetheBackrooms
                 ColorLeverDoorLock = FindObjectsOfType<ColorLeverDoorLock>().ToList();
                 GearPuzzle = FindObjectsOfType<GearPuzzle>().ToList();
                 GhostPlayer = FindObjectsOfType<GhostPlayerController>().ToList();
+                JumspcareTest = FindObjectsOfType<JumspcareTest>().ToList();
+                InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                
              //   light = FindObjectsOfType<Light>().ToList();
               //  SmilerAI = FindObjectsOfType<SmilerAI>().ToList();
@@ -271,7 +279,7 @@ namespace InsidetheBackrooms
 
         }
 
-
+       
 
         public override void OnInitializeMelon()
         {
@@ -316,6 +324,8 @@ namespace InsidetheBackrooms
 
         }
 
+   
+
         public void MenuWindow(int windowID)
         {
             GUILayout.BeginHorizontal();
@@ -350,6 +360,26 @@ namespace InsidetheBackrooms
             GUILayout.EndVertical();
 
             // Display content for the selected tab
+
+
+            GUILayout.BeginArea(new Rect(10, windowRect.height - 30, windowRect.width - 20, 40));
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Save Config"))
+            {
+                SaveConfig();
+            }
+
+            if (GUILayout.Button("Load Config"))
+            {
+                LoadConfig();
+
+            }
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+
+
 
             GUILayout.BeginVertical();
 
@@ -624,29 +654,33 @@ namespace InsidetheBackrooms
                         {
                             player.UserCode_RpcAddFuse();
                             player.RpcAddFuse();
+                           // player.UserCode_CmdHandleLever();
                             player.UserCode_CmdAddFuse__NetworkIdentity(Il2CppMirror.NetworkIdentity.previousLocalPlayer);
                         }
                     }
                     break;
                 case 5:
-                    if (GUILayout.Button("CmdKillPlayer"))
+                    if (GUILayout.Button("CmdKillPlayer<wip>"))
                     {
                         foreach (PlayerStats player in BasePlayer)
                         {
 
                             player.UserCode_CmdKillPlayer();
+                            player.CmdKillPlayer();
 
                         }
                     }
-                    if (GUILayout.Button("DoRespawn"))
+                    if (GUILayout.Button("DoRespawn<wip>"))
                     {
                         foreach (RespawnDoor player in RespawnDoor)
                         {
 
                             player.DoRespawn();
+                            player._DoRespawn_b__27_0();
 
                         }
                     }
+                  
                   
                     if (GUILayout.Button("ItemDumper"))
                     {
@@ -664,6 +698,11 @@ namespace InsidetheBackrooms
                         }
 
                     }
+                  
+
+
+
+
                     break;
             }
 
@@ -699,7 +738,7 @@ namespace InsidetheBackrooms
             {
                 tabitem = 4;
             }
-            if (GUILayout.Toggle(tab == 5, "Hotel", "Button", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Toggle(tabitem == 5, "Hotel", "Button", GUILayout.ExpandWidth(true)))
             {
                 tabitem = 5;
             }
@@ -942,6 +981,77 @@ namespace InsidetheBackrooms
 
             return Bones;
         }
+
+
+
+        void SaveConfig()
+        {
+            PlayerPrefs.SetInt("EntitysEsp", EntitysEsp ? 1 : 0);
+            PlayerPrefs.SetInt("Chamsesp", Chamsesp ? 1 : 0);
+            PlayerPrefs.SetInt("ItemsEsp", ItemsEsp ? 1 : 0);
+            PlayerPrefs.SetInt("giftboxesp", giftboxesp ? 1 : 0);
+            PlayerPrefs.SetInt("NumericLockesp", NumericLockesp ? 1 : 0);
+            PlayerPrefs.SetInt("NumericPad3esp", NumericPad3esp ? 1 : 0);
+            PlayerPrefs.SetInt("InteractablePropESP", InteractablePropESP ? 1 : 0);
+            PlayerPrefs.SetInt("SafeESP", SafeESP ? 1 : 0);
+            PlayerPrefs.SetInt("DoorEsp", DoorEsp ? 1 : 0);
+            PlayerPrefs.SetInt("RespawnDoorEsp", RespawnDoorEsp ? 1 : 0);
+            PlayerPrefs.SetInt("PlayersEsp", PlayersEsp ? 1 : 0);
+            PlayerPrefs.SetInt("GhostPlayersEsp", GhostPlayersEsp ? 1 : 0);
+            PlayerPrefs.SetInt("ElevatorEsp", ElevatorEsp ? 1 : 0);
+            PlayerPrefs.SetInt("ExitZoneEsp", ExitZoneEsp ? 1 : 0);
+            PlayerPrefs.SetInt("infStamina", infStamina ? 1 : 0);
+            PlayerPrefs.SetInt("Godmode", Godmode ? 1 : 0);
+            PlayerPrefs.SetInt("Computeresp", Computeresp ? 1 : 0);
+            PlayerPrefs.SetInt("LetterLockesp", LetterLockesp ? 1 : 0);
+            PlayerPrefs.SetInt("LeverDoorLockesp", LeverDoorLockesp ? 1 : 0);
+            PlayerPrefs.SetInt("Clockesp", Clockesp ? 1 : 0);
+            PlayerPrefs.SetInt("Boxtoggle", Boxtoggle ? 1 : 0);
+            PlayerPrefs.SetInt("GiveList", GiveList ? 1 : 0);
+
+            PlayerPrefs.Save();
+            Debug.Log("Config saved.");
+        }
+
+        void LoadConfig()
+        {
+            if (PlayerPrefs.HasKey("EntitysEsp"))
+            {
+                EntitysEsp = PlayerPrefs.GetInt("EntitysEsp") == 1;
+                Chamsesp = PlayerPrefs.GetInt("Chamsesp") == 1;
+                ItemsEsp = PlayerPrefs.GetInt("ItemsEsp") == 1;
+                giftboxesp = PlayerPrefs.GetInt("giftboxesp") == 1;
+                NumericLockesp = PlayerPrefs.GetInt("NumericLockesp") == 1;
+                NumericPad3esp = PlayerPrefs.GetInt("NumericPad3esp") == 1;
+                InteractablePropESP = PlayerPrefs.GetInt("InteractablePropESP") == 1;
+                SafeESP = PlayerPrefs.GetInt("SafeESP") == 1;
+                DoorEsp = PlayerPrefs.GetInt("DoorEsp") == 1;
+                RespawnDoorEsp = PlayerPrefs.GetInt("RespawnDoorEsp") == 1;
+                PlayersEsp = PlayerPrefs.GetInt("PlayersEsp") == 1;
+                GhostPlayersEsp = PlayerPrefs.GetInt("GhostPlayersEsp") == 1;
+                ElevatorEsp = PlayerPrefs.GetInt("ElevatorEsp") == 1;
+                ExitZoneEsp = PlayerPrefs.GetInt("ExitZoneEsp") == 1;
+                infStamina = PlayerPrefs.GetInt("infStamina") == 1;
+                Godmode = PlayerPrefs.GetInt("Godmode") == 1;
+                Computeresp = PlayerPrefs.GetInt("Computeresp") == 1;
+                LetterLockesp = PlayerPrefs.GetInt("LetterLockesp") == 1;
+                LeverDoorLockesp = PlayerPrefs.GetInt("LeverDoorLockesp") == 1;
+                Clockesp = PlayerPrefs.GetInt("Clockesp") == 1;
+                Boxtoggle = PlayerPrefs.GetInt("Boxtoggle") == 1;
+                GiveList = PlayerPrefs.GetInt("GiveList") == 1;
+
+                Debug.Log("Config loaded.");
+            }
+        }
+
+
+
+
+
+
+
+
+
         public override void OnGUI()
         {
           
