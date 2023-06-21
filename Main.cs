@@ -6,6 +6,9 @@ using Il2Cpp;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using HarmonyLib;
+using static Il2Cpp.AnniversaryEvent;
+
 namespace InsidetheBackrooms
 {
     public static class BuildInfo
@@ -20,9 +23,8 @@ namespace InsidetheBackrooms
 
     public class InsidetheBackrooms : MelonPlugin
     {
-        private string saveFilePath = "config.txt"; // File path to save the configuration
-
-
+    
+    
         //new                                                                                    
         string[] itemNames = new string[]
 {
@@ -73,7 +75,7 @@ namespace InsidetheBackrooms
         private bool Boxtoggle = false;
 
         private bool GiveList = false;
-
+       
 
         public static bool NoclipTest = false;
         private Color blackCol;
@@ -123,6 +125,7 @@ namespace InsidetheBackrooms
         public static List<GearPuzzle> GearPuzzle = new List<GearPuzzle>();
         public static List<JumspcareTest> JumspcareTest = new List<JumspcareTest>();
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
+        public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
 
         public static Color TestColor
         {
@@ -164,7 +167,10 @@ namespace InsidetheBackrooms
             }
         }
 
-   
+
+     
+
+     
 
         public override void OnUpdate()
         {
@@ -214,6 +220,7 @@ namespace InsidetheBackrooms
                 GhostPlayer = FindObjectsOfType<GhostPlayerController>().ToList();
                 JumspcareTest = FindObjectsOfType<JumspcareTest>().ToList();
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
+                AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
                
              //   light = FindObjectsOfType<Light>().ToList();
               //  SmilerAI = FindObjectsOfType<SmilerAI>().ToList();
@@ -288,7 +295,6 @@ namespace InsidetheBackrooms
             windowRect.y = (Screen.height - windowRect.height) / 2;
 
           
-
             // MelonCoroutines.Start(UpdateObjects());
 
             // MelonCoroutines.Start(UpdateObjects());
@@ -297,7 +303,7 @@ namespace InsidetheBackrooms
                 hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy
             };
             //Unlit/Color Shader
-          
+           
 
             chamsMaterial.SetInt("_Cull", 0);
             chamsMaterial.SetInt("_ZTest", 8); // 8 = see through walls.
@@ -356,6 +362,10 @@ namespace InsidetheBackrooms
             if (GUILayout.Toggle(tab == 5, "Debug", "Button", GUILayout.ExpandWidth(true)))
             {
                 tab = 5;
+            }
+             if (GUILayout.Toggle(tab == 6, "Event", "Button", GUILayout.ExpandWidth(true)))
+            {
+                tab = 6;
             }
             GUILayout.EndVertical();
 
@@ -646,18 +656,7 @@ namespace InsidetheBackrooms
                         }
                     }
 
-                    //FuseBox
-                    if (GUILayout.Button("Add-Fuses-to-Box<wip>"))
-                    {
-
-                        foreach (FuseBox player in FuseBox)
-                        {
-                            player.UserCode_RpcAddFuse();
-                            player.RpcAddFuse();
-                           // player.UserCode_CmdHandleLever();
-                            player.UserCode_CmdAddFuse__NetworkIdentity(Il2CppMirror.NetworkIdentity.previousLocalPlayer);
-                        }
-                    }
+                  
                     break;
                 case 5:
                     if (GUILayout.Button("CmdKillPlayer<wip>"))
@@ -680,8 +679,7 @@ namespace InsidetheBackrooms
 
                         }
                     }
-                  
-                  
+                
                     if (GUILayout.Button("ItemDumper"))
                     {
 
@@ -702,6 +700,80 @@ namespace InsidetheBackrooms
 
 
 
+
+                    break;
+                case 6:
+                    GUILayout.Label("Do this in Game singleplayer");
+
+                    if (GUILayout.Button("AnniversaryEventComplete"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+
+                            player.CompleteEvent();
+
+                        }
+                    }
+                    if (GUILayout.Button("StartAnniversaryEvent"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+
+                            player.UserCode_RpcStartGame();
+
+                        }
+
+                    }
+                    if (GUILayout.Button("EndAnniversaryEvent"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+
+                            player.UserCode_RpcEndEvent();
+
+                        }
+                    }
+                    GUILayout.Label("Press SteamStat to unlock all the event stuff");
+
+                    if (GUILayout.Button("SteamStat event"))
+                    {
+                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23, 1);
+                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD1, 1);
+                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD2, 1);
+                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD3, 1);
+                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD4, 1);
+                    }
+                    GUILayout.Label("IDK if this works dont ask me XD");
+                    if (GUILayout.Button("ClaimReward<GOLDEN_VAMPIRE_GIRL>"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_VAMPIRE_GIRL));
+                        }
+                    }
+                    if (GUILayout.Button("ClaimReward<GOLDEN_SUITED_MAN>"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_SUITED_MAN));
+                        }
+                    }
+                    if (GUILayout.Button("ClaimReward<GOLDEN_PARTY_MASK>"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_PARTY_MASK));
+                        }
+                    }
+                    if (GUILayout.Button("ClaimReward<FATCAT_COSMETIC>"))
+                    {
+                        foreach (AnniversaryEvent player in AnniversaryEvent)
+                        {
+                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.FATCAT_COSMETIC));
+                        }
+                    }
+                   
+                   
 
                     break;
             }
