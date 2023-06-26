@@ -28,11 +28,11 @@ namespace InsidetheBackrooms
         //new                                                                                    
         string[] itemNames = new string[]
 {
-    "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe", "Ear",
+    "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe","Dart", "Ear",
     "Extinguisher", "Eye", "Fingers", "Flashlight", "Foot", "FunDoorKey", "Fuse", "GarageCard", "Gear", "GearLeverHandle",
     "GeigerCounter", "Hammer", "Hand", "Ingot6", "Ingot8", "Ingot10", "MotionSensor", "MedallionFish", "MedallionParrot", "MedallionRat",
     "MetalDetector", "MothCoccoon", "MothJelly", "Nose", "PartyHat", "PetrolCanEmpty", "Pipe", "Plier", "ProtectionSuit",
-    "Radio", "RedAccesCard", "RedKey", "ScrewDriver", "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
+    "Radio", "RedAccesCard", "RedKey","Snowball", "ScrewDriver", "SewerCanalsKey", "SewerEmergencyKey", "SewerStorageKey",
     "StatueFace", "StorageKey", "Teeth", "Valve", "VynilDish"
 };
         string[] Boosteritem = new string[]
@@ -73,6 +73,7 @@ namespace InsidetheBackrooms
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
         private bool Boxtoggle = false;
+      
 
         private bool GiveList = false;
        
@@ -85,7 +86,6 @@ namespace InsidetheBackrooms
         public static List<HumanDogAI> BaseAIHumanDogAI = new List<HumanDogAI>();
         public static List<PlayerController> Player = new List<PlayerController>();
         public static List<GhostPlayerController> GhostPlayer = new List<GhostPlayerController>();
-       // public static List<Light> light = new List<Light>();
         public static List<GridButtonPadlock> Elev = new List<GridButtonPadlock>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
         public static List<CollectableItem> ItemObj = new List<CollectableItem>();
@@ -117,7 +117,6 @@ namespace InsidetheBackrooms
         public static List<EnemySpawner> EnemySpawner = new List<EnemySpawner>();
         public static List<ComputersScreenPuzzle> ComputersScreenPuzzle = new List<ComputersScreenPuzzle>();
         public static List<LetterLock> LetterLock = new List<LetterLock>();
-      //  public static List<SmilerAI> SmilerAI = new List<SmilerAI>();
         public static List<ClockPuzzle> ClockPuzzle = new List<ClockPuzzle>();
         public static List<FuseBox> FuseBox = new List<FuseBox>();
         public static List<InstantDamageTrigger> InstantDamageTrigger = new List<InstantDamageTrigger>();
@@ -126,6 +125,7 @@ namespace InsidetheBackrooms
         public static List<JumspcareTest> JumspcareTest = new List<JumspcareTest>();
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
+        public static List<PlayerGear> PlayerGear = new List<PlayerGear>();
 
         public static Color TestColor
         {
@@ -138,6 +138,7 @@ namespace InsidetheBackrooms
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
         private int tab2 = 0; // Current tab index
+        private int tab3 = 0; // Current tab index
         private int tabitem = 0; // Current tab index
         private Color backgroundColor = Color.black; // Background color
         private bool showMenu = true; // Whether to show the menu or not
@@ -221,10 +222,9 @@ namespace InsidetheBackrooms
                 JumspcareTest = FindObjectsOfType<JumspcareTest>().ToList();
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
+                PlayerGear = FindObjectsOfType<PlayerGear>().ToList();
                
-             //   light = FindObjectsOfType<Light>().ToList();
-              //  SmilerAI = FindObjectsOfType<SmilerAI>().ToList();
-               
+     
                 
                 if(Chamsesp)
                 {
@@ -273,13 +273,11 @@ namespace InsidetheBackrooms
                         player.m_Paralized = false;
                         player.m_HasInvulnerability = !Godmode;
                         player.Networkm_HasInvulnerability = !Godmode;
-                   //     player.CmdTakeDamage(0);
-
                   
                      
                 }
             }
-          
+         
 
                 cam = Camera.main;
 
@@ -295,22 +293,8 @@ namespace InsidetheBackrooms
             windowRect.y = (Screen.height - windowRect.height) / 2;
 
           
-            // MelonCoroutines.Start(UpdateObjects());
-
-            // MelonCoroutines.Start(UpdateObjects());
-            chamsMaterial = new Material(Shader.Find("Hidden/Internal-Colored"))
-            {
-                hideFlags = HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy
-            };
-            //Unlit/Color Shader
-           
-
-            chamsMaterial.SetInt("_Cull", 0);
-            chamsMaterial.SetInt("_ZTest", 8); // 8 = see through walls.
-            chamsMaterial.SetInt("_ZWrite", 0);
-            chamsMaterial.SetInt("_ZBias", 0);
-            chamsMaterial.SetColor("_Color", Color.cyan);
-
+         
+          
             xray = new Material(Shader.Find("Hidden/Internal-Colored"))
             {
                 hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset
@@ -363,10 +347,11 @@ namespace InsidetheBackrooms
             {
                 tab = 5;
             }
-             if (GUILayout.Toggle(tab == 6, "Event", "Button", GUILayout.ExpandWidth(true)))
+             if (GUILayout.Toggle(tab == 6, "Unlocker", "Button", GUILayout.ExpandWidth(true)))
             {
                 tab = 6;
             }
+           
             GUILayout.EndVertical();
 
             // Display content for the selected tab
@@ -410,7 +395,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
-                  
+                 
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
@@ -655,8 +640,8 @@ namespace InsidetheBackrooms
                             player.UserCode_CmdClose();
                         }
                     }
+                   
 
-                  
                     break;
                 case 5:
                     if (GUILayout.Button("CmdKillPlayer<wip>"))
@@ -679,7 +664,7 @@ namespace InsidetheBackrooms
 
                         }
                     }
-                
+                   
                     if (GUILayout.Button("ItemDumper"))
                     {
 
@@ -702,80 +687,121 @@ namespace InsidetheBackrooms
 
 
                     break;
+              
                 case 6:
-                    GUILayout.Label("Do this in Game singleplayer");
-
-                    if (GUILayout.Button("AnniversaryEventComplete"))
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Toggle(tab3 == 0, "Main", "Button", GUILayout.ExpandWidth(true)))
                     {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-
-                            player.CompleteEvent();
-
-                        }
+                        tab3 = 0;
                     }
-                    if (GUILayout.Button("StartAnniversaryEvent"))
+
+                    if (GUILayout.Toggle(tab3 == 1, "Anniversary", "Button", GUILayout.ExpandWidth(true)))
                     {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-
-                            player.UserCode_RpcStartGame();
-
-                        }
-
+                        tab3 = 1;
                     }
-                    if (GUILayout.Button("EndAnniversaryEvent"))
+                    GUILayout.EndHorizontal();
+
+                 
+
+                    switch (tab3)
                     {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
+                        case 0:
+                            GUILayout.Label("Reach levels and complete time to 69");
+                            if (GUILayout.Button("SteamStat<Levels>"))
+                            {
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.COMPLETE_TIME, 69);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_DARKROOMS, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_FUNROOM, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_OFFICEROOMS, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_PARKING, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_SEWER, 1);
 
-                            player.UserCode_RpcEndEvent();
+                            }
+                              GUILayout.Label("Unlocks 1-4 levels");
+                            if (GUILayout.Button("UnlockAchievements<Levels>"))
+                            {
+                            
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_1);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_2);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_3);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_4);
+                               
+                            }
+                            GUILayout.Label("Unlocks all Achievements");
+                            if (GUILayout.Button("UnlockAchievements"))
+                            {
+                     
 
-                        }
-                    }
-                    GUILayout.Label("Press SteamStat to unlock all the event stuff");
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_1);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_2);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_3);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_4);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.HOUND_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.BACT_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.SMILER_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.PARTYGOER_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.SKINSTEALER_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.CLUMPS_VICTIM);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_ESCAPE_BACKROOMS);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_NO_DIE);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_SPEEDRUNNER);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_SEWER_LEVEL);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_FUNLEVEL_ENDING);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LOST_ENDING);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HOTEL_LEVEL);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_EASY_COMPLETE);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MEDIUM_COMPLETE);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HARD_COMPLETE);
+                            
+                              
+                            }
+                          
+                            break;
+                        case 1:
+                            GUILayout.Label("Do this in Game Singleplayer only");
 
-                    if (GUILayout.Button("SteamStat event"))
-                    {
-                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23, 1);
-                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD1, 1);
-                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD2, 1);
-                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD3, 1);
-                        AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD4, 1);
-                    }
-                    GUILayout.Label("IDK if this works dont ask me XD");
-                    if (GUILayout.Button("ClaimReward<GOLDEN_VAMPIRE_GIRL>"))
-                    {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_VAMPIRE_GIRL));
-                        }
-                    }
-                    if (GUILayout.Button("ClaimReward<GOLDEN_SUITED_MAN>"))
-                    {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_SUITED_MAN));
-                        }
-                    }
-                    if (GUILayout.Button("ClaimReward<GOLDEN_PARTY_MASK>"))
-                    {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.GOLDEN_PARTY_MASK));
-                        }
-                    }
-                    if (GUILayout.Button("ClaimReward<FATCAT_COSMETIC>"))
-                    {
-                        foreach (AnniversaryEvent player in AnniversaryEvent)
-                        {
-                            player.ClaimReward((PartygoerEventGift)player.RewardUnlocked(ANNIVERSARY_23_REWARD.FATCAT_COSMETIC));
-                        }
-                    }
-                   
-                   
+                            if (GUILayout.Button("AnniversaryEventComplete"))
+                            {
+                                foreach (AnniversaryEvent player in AnniversaryEvent)
+                                {
 
-                    break;
+                                    player.CompleteEvent();
+
+                                }
+                            }
+                            if (GUILayout.Button("StartAnniversaryEvent"))
+                            {
+                                foreach (AnniversaryEvent player in AnniversaryEvent)
+                                {
+
+                                    player.UserCode_RpcStartGame();
+
+                                }
+
+                            }
+                            if (GUILayout.Button("EndAnniversaryEvent"))
+                            {
+                                foreach (AnniversaryEvent player in AnniversaryEvent)
+                                {
+
+                                    player.UserCode_RpcEndEvent();
+
+                                }
+                            }
+                            GUILayout.Label("Press SteamStat to unlock all the event stuff");
+
+                            if (GUILayout.Button("SteamStat event"))
+                            {
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD1, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD2, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD3, 1);
+                                AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD4, 1);
+                            }
+                        
+                            break;
+                    }
+                            break;
             }
 
             GUILayout.EndVertical();
@@ -1127,8 +1153,7 @@ namespace InsidetheBackrooms
         public override void OnGUI()
         {
           
-          //  Il2CppMeshCombineStudio.Console.instance.consoleKey = KeyCode.Tab;
-
+      
 
             if (showMenu) // Only draw the menu when showMenu is true
             {
