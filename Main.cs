@@ -68,7 +68,7 @@ namespace InsidetheBackrooms
         private bool ExitZoneEsp = false;
         private bool infStamina = false;
         private bool Godmode = false;
-        private bool playercolortest = false;
+      
         private bool Computeresp = false;
         private bool LetterLockesp = false;
         private bool LeverDoorLockesp = false;
@@ -129,9 +129,6 @@ namespace InsidetheBackrooms
         public static List<PlayerGear> PlayerGear = new List<PlayerGear>();
         public static List<GameManager> GameManager = new List<GameManager>();
         public static List<LobbyPlayer> LobbyPlayer = new List<LobbyPlayer>();
-        private string[] dropdownOptions = { "Option 1", "Option 2", "Option 3" };
-        private int selectedOptionIndex = 0;
-        private bool isDropdownOpen = false;
 
         public static Color TestColor
         {
@@ -176,27 +173,6 @@ namespace InsidetheBackrooms
             }
         }
 
-        const int MOUSE_LEFT_BUTTON = 0;
-        const int MOUSE_RIGHT_BUTTON = 1;
-
-        /// <summary>
-        /// Mouse sensitivity.
-        /// Default 0.3.
-        /// </summary>
-        public float MouseSensitivity = 0.3f;
-
-        /// <summary>
-        /// Keyboard sensitivity.
-        /// Default 5.0.
-        /// </summary>
-        public float KeyboardSensitivity = 5.0f;
-
-        /// <summary>
-        /// Last position of the mouse.
-        /// </summary>
-        private Vector3 _lastMousePosition;
-
-        Color customNameColor = new Color(customNameR, customNameG, customNameB);
 
 
         public override void OnUpdate()
@@ -434,14 +410,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.EndVertical();
 
-                    GUILayout.Label("Red");
-                    customNameR = GUILayout.HorizontalSlider(customNameR, 0f, 1f, GUILayout.ExpandWidth(true));
-
-                    GUILayout.Label("Green");
-                    customNameG = GUILayout.HorizontalSlider(customNameG, 0f, 1f, GUILayout.ExpandWidth(true));
-
-                    GUILayout.Label("Blue");
-                    customNameB = GUILayout.HorizontalSlider(customNameB, 0f, 1f, GUILayout.ExpandWidth(true));
+              
 
                     break;
 
@@ -681,27 +650,7 @@ namespace InsidetheBackrooms
                             player.UserCode_CmdClose();
                         }
                     }
-                    // Create the dropdown button
-                    if (GUILayout.Button(dropdownOptions[selectedOptionIndex]))
-                    {
-                        isDropdownOpen = !isDropdownOpen;
-                    }
-
-                    // Create the dropdown list
-                    if (isDropdownOpen)
-                    {
-                        for (int i = 0; i < dropdownOptions.Length; i++)
-                        {
-                            if (GUILayout.Button(dropdownOptions[i]))
-                            {
-                                selectedOptionIndex = i;
-                                isDropdownOpen = false;
-                            }
-                        }
-                    }
-
-                    // Use the selected option
-                    string selectedOption = dropdownOptions[selectedOptionIndex];
+                 
 
                     break;
                 case 5:
