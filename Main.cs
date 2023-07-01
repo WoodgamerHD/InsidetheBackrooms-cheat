@@ -68,6 +68,7 @@ namespace InsidetheBackrooms
         private bool ExitZoneEsp = false;
         private bool infStamina = false;
         private bool Godmode = false;
+        private bool playercolortest = false;
         private bool Computeresp = false;
         private bool LetterLockesp = false;
         private bool LeverDoorLockesp = false;
@@ -126,6 +127,11 @@ namespace InsidetheBackrooms
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
         public static List<PlayerGear> PlayerGear = new List<PlayerGear>();
+        public static List<GameManager> GameManager = new List<GameManager>();
+        public static List<LobbyPlayer> LobbyPlayer = new List<LobbyPlayer>();
+        private string[] dropdownOptions = { "Option 1", "Option 2", "Option 3" };
+        private int selectedOptionIndex = 0;
+        private bool isDropdownOpen = false;
 
         public static Color TestColor
         {
@@ -134,7 +140,9 @@ namespace InsidetheBackrooms
                 return new Color(1.2f, 3f, 4.1f, 1f);
             }
         }
-
+        public static float customNameR = 1f; // Initial red value
+        public static float customNameG = 0f; // Initial green value
+        public static float customNameB = 0f; // Initial blue value
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
         private int tab = 0; // Current tab index
         private int tab2 = 0; // Current tab index
@@ -168,10 +176,28 @@ namespace InsidetheBackrooms
             }
         }
 
+        const int MOUSE_LEFT_BUTTON = 0;
+        const int MOUSE_RIGHT_BUTTON = 1;
 
-     
+        /// <summary>
+        /// Mouse sensitivity.
+        /// Default 0.3.
+        /// </summary>
+        public float MouseSensitivity = 0.3f;
 
-     
+        /// <summary>
+        /// Keyboard sensitivity.
+        /// Default 5.0.
+        /// </summary>
+        public float KeyboardSensitivity = 5.0f;
+
+        /// <summary>
+        /// Last position of the mouse.
+        /// </summary>
+        private Vector3 _lastMousePosition;
+
+        Color customNameColor = new Color(customNameR, customNameG, customNameB);
+
 
         public override void OnUpdate()
         {
@@ -223,6 +249,8 @@ namespace InsidetheBackrooms
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
                 PlayerGear = FindObjectsOfType<PlayerGear>().ToList();
+                GameManager = FindObjectsOfType<GameManager>().ToList();
+                LobbyPlayer = FindObjectsOfType<LobbyPlayer>().ToList();
                
      
                 
@@ -261,6 +289,9 @@ namespace InsidetheBackrooms
 
 
             }
+         
+           
+
             if (Godmode)
             {
                 foreach (PlayerStats player in BasePlayer)
@@ -277,14 +308,14 @@ namespace InsidetheBackrooms
                      
                 }
             }
-         
-
-                cam = Camera.main;
+            
+            cam = Camera.main;
 
 
         }
+    
+      
 
-       
 
         public override void OnInitializeMelon()
         {
@@ -351,7 +382,7 @@ namespace InsidetheBackrooms
             {
                 tab = 6;
             }
-           
+         
             GUILayout.EndVertical();
 
             // Display content for the selected tab
@@ -395,12 +426,22 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
+                  
                  
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
 
                     GUILayout.EndVertical();
+
+                    GUILayout.Label("Red");
+                    customNameR = GUILayout.HorizontalSlider(customNameR, 0f, 1f, GUILayout.ExpandWidth(true));
+
+                    GUILayout.Label("Green");
+                    customNameG = GUILayout.HorizontalSlider(customNameG, 0f, 1f, GUILayout.ExpandWidth(true));
+
+                    GUILayout.Label("Blue");
+                    customNameB = GUILayout.HorizontalSlider(customNameB, 0f, 1f, GUILayout.ExpandWidth(true));
 
                     break;
 
@@ -640,7 +681,27 @@ namespace InsidetheBackrooms
                             player.UserCode_CmdClose();
                         }
                     }
-                   
+                    // Create the dropdown button
+                    if (GUILayout.Button(dropdownOptions[selectedOptionIndex]))
+                    {
+                        isDropdownOpen = !isDropdownOpen;
+                    }
+
+                    // Create the dropdown list
+                    if (isDropdownOpen)
+                    {
+                        for (int i = 0; i < dropdownOptions.Length; i++)
+                        {
+                            if (GUILayout.Button(dropdownOptions[i]))
+                            {
+                                selectedOptionIndex = i;
+                                isDropdownOpen = false;
+                            }
+                        }
+                    }
+
+                    // Use the selected option
+                    string selectedOption = dropdownOptions[selectedOptionIndex];
 
                     break;
                 case 5:
@@ -725,6 +786,7 @@ namespace InsidetheBackrooms
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_2);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_3);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_4);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_SEWER_LEVEL);
                                
                             }
                             GUILayout.Label("Unlocks all Achievements");
@@ -802,6 +864,9 @@ namespace InsidetheBackrooms
                             break;
                     }
                             break;
+               
+
+                  
             }
 
             GUILayout.EndVertical();
@@ -810,6 +875,7 @@ namespace InsidetheBackrooms
             GUI.DragWindow(); // Allow the user to drag the window around
         }
         private Vector2 scrollPosition5 = Vector2.zero;
+        private Vector2 scrollPosition7 = Vector2.zero;
         private static Rect Itemgivewindow = new Rect(60f, 250f, 400, 400);
         public void GiveitemsWindow(int windowID)
         {
@@ -1152,8 +1218,9 @@ namespace InsidetheBackrooms
 
         public override void OnGUI()
         {
-          
-      
+        
+
+
 
             if (showMenu) // Only draw the menu when showMenu is true
             {
@@ -1199,7 +1266,7 @@ namespace InsidetheBackrooms
                     Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
 
-                    if (ESPUtils.IsOnScreen(w2s))
+                    if (ESPUtils.IsOnScreen(w2s) && !player.isLocalPlayer)
                     {
 
                         ESPUtils.DrawAllBones(GetAllBones(player.PlayerAnimator), TestColor);
