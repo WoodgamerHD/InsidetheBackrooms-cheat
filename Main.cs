@@ -126,9 +126,7 @@ namespace InsidetheBackrooms
         public static List<JumspcareTest> JumspcareTest = new List<JumspcareTest>();
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
-        public static List<PlayerGear> PlayerGear = new List<PlayerGear>();
-        public static List<GameManager> GameManager = new List<GameManager>();
-        public static List<LobbyPlayer> LobbyPlayer = new List<LobbyPlayer>();
+        
 
         public static Color TestColor
         {
@@ -224,11 +222,7 @@ namespace InsidetheBackrooms
                 JumspcareTest = FindObjectsOfType<JumspcareTest>().ToList();
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
-                PlayerGear = FindObjectsOfType<PlayerGear>().ToList();
-                GameManager = FindObjectsOfType<GameManager>().ToList();
-                LobbyPlayer = FindObjectsOfType<LobbyPlayer>().ToList();
                
-     
                 
                 if(Chamsesp)
                 {
@@ -245,10 +239,6 @@ namespace InsidetheBackrooms
             {
                 showMenu = !showMenu;
 
-            }
-            if(Keyboard.current.pKey.wasPressedThisFrame)
-            {
-                showMenu = !showMenu;
             }
           
             if (infStamina)
@@ -276,10 +266,10 @@ namespace InsidetheBackrooms
                         player.health = float.MaxValue;
                         player.anxiety = 0;
                         player.m_Radiation = 0;
-                        player.m_HasEnergyBoost = !Godmode;
+                        player.m_HasEnergyBoost = true;
                         player.m_Paralized = false;
-                        player.m_HasInvulnerability = !Godmode;
-                        player.Networkm_HasInvulnerability = !Godmode;
+                        player.m_HasInvulnerability = true;
+                        player.Networkm_HasInvulnerability = true;
                   
                      
                 }
