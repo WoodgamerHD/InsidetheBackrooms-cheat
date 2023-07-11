@@ -25,7 +25,7 @@ namespace InsidetheBackrooms
     {
     
     
-        //new                                                                                    
+                                                                                        
         string[] itemNames = new string[]
 {
     "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe","Dart", "Ear",
@@ -83,23 +83,15 @@ namespace InsidetheBackrooms
         private Color blackCol;
         private Color entityBoxCol;
         public static List<BaseAIEntity> BaseAI = new List<BaseAIEntity>();
-        public static List<AbstractEntityAI> AbstractEntityAI = new List<AbstractEntityAI>();
-        public static List<HumanDogAI> BaseAIHumanDogAI = new List<HumanDogAI>();
         public static List<PlayerController> Player = new List<PlayerController>();
         public static List<GhostPlayerController> GhostPlayer = new List<GhostPlayerController>();
-        public static List<GridButtonPadlock> Elev = new List<GridButtonPadlock>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
         public static List<CollectableItem> ItemObj = new List<CollectableItem>();
-        public static List<Elevator> Elevator = new List<Elevator>();
-        public static List<BasePlayerController> BasePlayerlocal = new List<BasePlayerController>();
+        public static List<Elevator> Elevator = new List<Elevator>();       
         public static List<MiscTest> MiscTest = new List<MiscTest>();
-        public static List<EndDoor> Door = new List<EndDoor>();
-        public static List<VentDoorConnector> VentDoor = new List<VentDoorConnector>();
+        public static List<EndDoor> Door = new List<EndDoor>();   
         public static List<RespawnDoor> RespawnDoor = new List<RespawnDoor>();
-        public static List<RoomManager> RoomManager = new List<RoomManager>();
-        public static List<ChatManager> ChatManager = new List<ChatManager>();
         public static List<BackroomsExitZone> BackroomsExit = new List<BackroomsExitZone>();
-        public static List<BackroomsManager> BackroomsManager = new List<BackroomsManager>();
         public static List<Giftbox> Giftbox = new List<Giftbox>();
         public static List<SafeBox> SafeBox = new List<SafeBox>();
         public static List<PartygoerBalloon> PartygoerBalloon = new List<PartygoerBalloon>();
@@ -112,22 +104,14 @@ namespace InsidetheBackrooms
         public static List<NumericLock> NumericLock = new List<NumericLock>();
         public static List<MonsterSpawner> MonsterSpawner = new List<MonsterSpawner>();
         public static List<NumericPad3> NumericPad3 = new List<NumericPad3>();
-        public static List<OldPhone> OldPhone = new List<OldPhone>();
-        public static List<FlyCam> FlyCam = new List<FlyCam>();
+        public static List<OldPhone> OldPhone = new List<OldPhone>();  
         public static List<AirVent> AirVent = new List<AirVent>();
-        public static List<EnemySpawner> EnemySpawner = new List<EnemySpawner>();
         public static List<ComputersScreenPuzzle> ComputersScreenPuzzle = new List<ComputersScreenPuzzle>();
         public static List<LetterLock> LetterLock = new List<LetterLock>();
         public static List<ClockPuzzle> ClockPuzzle = new List<ClockPuzzle>();
-        public static List<FuseBox> FuseBox = new List<FuseBox>();
-        public static List<InstantDamageTrigger> InstantDamageTrigger = new List<InstantDamageTrigger>();
-        public static List<ColorLeverDoorLock> ColorLeverDoorLock = new List<ColorLeverDoorLock>();
-        public static List<GearPuzzle> GearPuzzle = new List<GearPuzzle>();
-        public static List<JumspcareTest> JumspcareTest = new List<JumspcareTest>();
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
         
-
         public static Color TestColor
         {
             get
@@ -147,10 +131,8 @@ namespace InsidetheBackrooms
         private bool showMenu = true; // Whether to show the menu or not
         private static Camera cam;
         float natNextUpdateTime;
-        private static Material chamsMaterial;
+    
         private static Material xray;
-        private static Material smooth;
-        public float verticalMovement = 10f;
 
         public static void DoChams()
         {
@@ -189,11 +171,6 @@ namespace InsidetheBackrooms
                 MiscTest = FindObjectsOfType<MiscTest>().ToList();
                 Door = FindObjectsOfType<EndDoor>().ToList();
                 RespawnDoor = FindObjectsOfType<RespawnDoor>().ToList();
-                RoomManager = FindObjectsOfType<RoomManager>().ToList();
-                BasePlayerlocal = FindObjectsOfType<BasePlayerController>().ToList();
-                ChatManager = FindObjectsOfType<ChatManager>().ToList();
-                BackroomsExit = FindObjectsOfType<BackroomsExitZone>().ToList();
-                BackroomsManager = FindObjectsOfType<BackroomsManager>().ToList();
                 Giftbox = FindObjectsOfType<Giftbox>().ToList();
                 SafeBox = FindObjectsOfType<SafeBox>().ToList();
                 PartygoerBalloon = FindObjectsOfType<PartygoerBalloon>().ToList();
@@ -207,19 +184,10 @@ namespace InsidetheBackrooms
                 MonsterSpawner = FindObjectsOfType<MonsterSpawner>().ToList();
                 NumericPad3 = FindObjectsOfType<NumericPad3>().ToList();
                 OldPhone = FindObjectsOfType<OldPhone>().ToList();
-                FlyCam = FindObjectsOfType<FlyCam>().ToList();
-                AirVent = FindObjectsOfType<AirVent>().ToList();
-                EnemySpawner = FindObjectsOfType<EnemySpawner>().ToList();
+                AirVent = FindObjectsOfType<AirVent>().ToList(); 
                 ComputersScreenPuzzle = FindObjectsOfType<ComputersScreenPuzzle>().ToList();
                 LetterLock = FindObjectsOfType<LetterLock>().ToList();
                 ClockPuzzle = FindObjectsOfType<ClockPuzzle>().ToList();
-                AbstractEntityAI = FindObjectsOfType<AbstractEntityAI>().ToList();
-                FuseBox = FindObjectsOfType<FuseBox>().ToList();
-                InstantDamageTrigger = FindObjectsOfType<InstantDamageTrigger>().ToList();
-                ColorLeverDoorLock = FindObjectsOfType<ColorLeverDoorLock>().ToList();
-                GearPuzzle = FindObjectsOfType<GearPuzzle>().ToList();
-                GhostPlayer = FindObjectsOfType<GhostPlayerController>().ToList();
-                JumspcareTest = FindObjectsOfType<JumspcareTest>().ToList();
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
                
@@ -235,7 +203,7 @@ namespace InsidetheBackrooms
 
 
 
-            if (Keyboard.current.insertKey.wasPressedThisFrame) // Toggle the menu when the Tab key is pressed
+            if (Keyboard.current.insertKey.wasPressedThisFrame)
             {
                 showMenu = !showMenu;
 
@@ -289,9 +257,6 @@ namespace InsidetheBackrooms
             windowRect.x = (Screen.width - windowRect.width) / 2;
             windowRect.y = (Screen.height - windowRect.height) / 2;
 
-          
-         
-          
             xray = new Material(Shader.Find("Hidden/Internal-Colored"))
             {
                 hideFlags = HideFlags.HideAndDontSave | HideFlags.DontUnloadUnusedAsset
@@ -299,12 +264,6 @@ namespace InsidetheBackrooms
 
             xray.SetInt("_ZTest", 8);
             xray.SetColor("_Color", Color.green);
-
-
-            smooth = new Material(Shader.Find("Hidden/InternalErrorShader"))
-            {
-                hideFlags = HideFlags.NotEditable | HideFlags.DontSaveInEditor | HideFlags.HideInHierarchy
-            };
 
             blackCol = new Color(0f, 0f, 0f, 120f);
             entityBoxCol = new Color(1.42f, 0f, 0f, 1f);
@@ -542,7 +501,7 @@ namespace InsidetheBackrooms
                         foreach (MiscTest player in MiscTest)
                         {
 
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.funLevelPos.transform.position);
 
                         }
@@ -552,7 +511,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.firstLevelPos.transform.position);
 
                         }
@@ -562,7 +521,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.secondLevelPos.transform.position);
 
                         }
@@ -572,7 +531,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.thirdLevelPos.transform.position);
 
                         }
@@ -582,7 +541,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.drainagePos.transform.position);
 
                         }
@@ -592,7 +551,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.parkingPos.transform.position);
 
                         }
@@ -602,7 +561,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.hallwayPos.transform.position);
 
                         }
@@ -612,7 +571,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.poolPos.transform.position);
 
                         }
@@ -622,7 +581,7 @@ namespace InsidetheBackrooms
 
                         foreach (MiscTest player in MiscTest)
                         {
-                            //player.DEVMODE_ENABLED = true;
+                           
                             player.TeleportPlayer(player.endPos.transform.position);
 
                         }
@@ -648,20 +607,22 @@ namespace InsidetheBackrooms
                     {
                         foreach (PlayerStats player in BasePlayer)
                         {
+                            if (player.isLocalPlayer)
+                            {
 
-                            player.UserCode_CmdKillPlayer();
-                            player.CmdKillPlayer();
-
+                                player.UserCode_CmdKillPlayer();
+                                player.CmdKillPlayer();
+                            }
                         }
                     }
                     if (GUILayout.Button("DoRespawn<wip>"))
                     {
                         foreach (RespawnDoor player in RespawnDoor)
                         {
-
-                            player.DoRespawn();
-                            player._DoRespawn_b__27_0();
-
+                            
+                                player.DoRespawn();
+                                player._DoRespawn_b__27_0();
+                            
                         }
                     }
                    
@@ -681,11 +642,7 @@ namespace InsidetheBackrooms
                         }
 
                     }
-                  
-
-
-
-
+                 
                     break;
               
                 case 6:
@@ -717,7 +674,7 @@ namespace InsidetheBackrooms
                                 AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_SEWER, 1);
 
                             }
-                              GUILayout.Label("Unlocks 1-4 levels");
+                              GUILayout.Label("Unlocks 1-5 levels");
                             if (GUILayout.Button("UnlockAchievements<Levels>"))
                             {
                             
@@ -868,7 +825,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -893,7 +850,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -919,7 +876,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -945,7 +902,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -970,7 +927,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -995,7 +952,7 @@ namespace InsidetheBackrooms
                             {
                                 foreach (MiscTest player in MiscTest)
                                 {
-                                    //player.DEVMODE_ENABLED = true;
+                                   
                                     player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
 
                                 }
@@ -1014,38 +971,7 @@ namespace InsidetheBackrooms
 
         }
 
-        public string bundlePath;
-        public string outputPath;
-
-
-
-        public void DumpAllPrefabs()
-        {
-            List<GameObject> prefabList = new List<GameObject>();
-
-            // Loop through all the game objects in the scene
-            foreach (GameObject obj in FindObjectsOfType<GameObject>())
-            {
-                // Check if the object is a prefab
-                if (!obj.scene.IsValid())
-                {
-                    // Add the prefab to the list
-                    prefabList.Add(obj);
-                }
-            }
-
-            // Dump the list to a file
-            StreamWriter writer = new StreamWriter("prefabdump.txt");
-            foreach (GameObject prefab in prefabList)
-            {
-                writer.WriteLine(prefab.name);
-            }
-            writer.Close();
-        }
-
-
-
-
+     
         private float DistanceFromCamera(Vector3 worldPos)
         {
             return Vector3.Distance(cam.transform.position, worldPos);
@@ -1292,7 +1218,7 @@ namespace InsidetheBackrooms
                 }
 
             }
-            //InteractableProp
+           
             if (InteractablePropESP)
             {
                 foreach (InteractableProp player in InteractableProp)
