@@ -50,8 +50,10 @@ namespace InsidetheBackrooms
         string[] terrorhotelitems = new string[] { "Ingot6", "Ingot8", "Ingot10", "StatueFace", "StorageKey", "VyniiDish", "Candle", "BoilerRoomKeys", "Pipe", "CurvedPipe", "MothCoccoon" };
 
 
+        string[] Grasslanditems = new string[] { "Chalice_Air", "Chalice_Fire", "Chalice_Water", "Chalice_Earth", "CloverKey", "MetalDetector", "AlmondWater", "SprayCan", "Pesticide", "MotionSensor", "CalmingPills", "Diskette" };
 
-       
+
+
         private bool EntitysEsp = false;
         private bool Chamsesp = false;
         private bool ItemsEsp = false;
@@ -61,6 +63,7 @@ namespace InsidetheBackrooms
         private bool InteractablePropESP = false;
         private bool SafeESP = false;
         private bool DoorEsp = false;
+        private bool Suitcaseesp = false;
         private bool RespawnDoorEsp = false;
         private bool PlayersEsp = false;
         private bool GhostPlayersEsp = false;
@@ -74,15 +77,19 @@ namespace InsidetheBackrooms
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
         private bool Boxtoggle = false;
+        private bool XmaxEventstart = false;
       
 
         private bool GiveList = false;
+        private bool nocliptest = false;
+        private bool dumbEntitys = false;
        
 
         public static bool NoclipTest = false;
         private Color blackCol;
         private Color entityBoxCol;
         public static List<BaseAIEntity> BaseAI = new List<BaseAIEntity>();
+        public static List<BaseMonsterController> BaseMonsterController = new List<BaseMonsterController>();
         public static List<PlayerController> Player = new List<PlayerController>();
         public static List<GhostPlayerController> GhostPlayer = new List<GhostPlayerController>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
@@ -102,7 +109,7 @@ namespace InsidetheBackrooms
         public static List<FunLevelRoom> FunLevelRoom = new List<FunLevelRoom>();
         public static List<NetworkReparent> NetworkReparent = new List<NetworkReparent>();
         public static List<NumericLock> NumericLock = new List<NumericLock>();
-        public static List<MonsterSpawner> MonsterSpawner = new List<MonsterSpawner>();
+       
         public static List<NumericPad3> NumericPad3 = new List<NumericPad3>();
         public static List<OldPhone> OldPhone = new List<OldPhone>();  
         public static List<AirVent> AirVent = new List<AirVent>();
@@ -111,7 +118,10 @@ namespace InsidetheBackrooms
         public static List<ClockPuzzle> ClockPuzzle = new List<ClockPuzzle>();
         public static List<InGameLobby> InGameLobby = new List<InGameLobby>();
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
-        
+        public static List<SuitcaseLoot> SuitcaseLoot = new List<SuitcaseLoot>();
+        public static List<BasePlayerController> BasePlayerController = new List<BasePlayerController>();
+    
+     
         public static Color TestColor
         {
             get
@@ -165,6 +175,7 @@ namespace InsidetheBackrooms
             {
                 Player = FindObjectsOfType<PlayerController>().ToList();
                 BaseAI = FindObjectsOfType<BaseAIEntity>().ToList();
+                BaseMonsterController = FindObjectsOfType<BaseMonsterController>().ToList();
                 ItemObj = FindObjectsOfType<CollectableItem>().ToList();
                 BasePlayer = FindObjectsOfType<PlayerStats>().ToList();
                 Elevator = FindObjectsOfType<Elevator>().ToList();
@@ -181,18 +192,20 @@ namespace InsidetheBackrooms
                 FunLevelRoom = FindObjectsOfType<FunLevelRoom>().ToList();
                 NetworkReparent = FindObjectsOfType<NetworkReparent>().ToList();
                 NumericLock = FindObjectsOfType<NumericLock>().ToList();
-                MonsterSpawner = FindObjectsOfType<MonsterSpawner>().ToList();
+            
                 NumericPad3 = FindObjectsOfType<NumericPad3>().ToList();
                 OldPhone = FindObjectsOfType<OldPhone>().ToList();
-                AirVent = FindObjectsOfType<AirVent>().ToList(); 
+                AirVent = FindObjectsOfType<AirVent>().ToList();
                 ComputersScreenPuzzle = FindObjectsOfType<ComputersScreenPuzzle>().ToList();
                 LetterLock = FindObjectsOfType<LetterLock>().ToList();
                 ClockPuzzle = FindObjectsOfType<ClockPuzzle>().ToList();
                 InGameLobby = FindObjectsOfType<InGameLobby>().ToList();
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
-               
-                
-                if(Chamsesp)
+                SuitcaseLoot = FindObjectsOfType<SuitcaseLoot>().ToList();
+                BasePlayerController = FindObjectsOfType<BasePlayerController>().ToList();
+
+
+                if (Chamsesp)
                 {
                     DoChams();
                 }
@@ -208,7 +221,7 @@ namespace InsidetheBackrooms
                 showMenu = !showMenu;
 
             }
-          
+
             if (infStamina)
             {
                 foreach (PlayerStats player in BasePlayer)
@@ -223,25 +236,26 @@ namespace InsidetheBackrooms
 
 
             }
-         
-           
+
+
 
             if (Godmode)
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
-                 
-                        player.health = float.MaxValue;
-                        player.anxiety = 0;
-                        player.m_Radiation = 0;
-                        player.m_HasEnergyBoost = true;
-                        player.m_Paralized = false;
-                        player.m_HasInvulnerability = true;
-                        player.Networkm_HasInvulnerability = true;
-                  
-                     
+
+                    player.health = float.MaxValue;
+                    player.anxiety = 0;
+                    player.m_Radiation = 0;
+                    player.m_HasEnergyBoost = true;
+                    player.m_Paralized = false;
+                    player.m_HasInvulnerability = true;
+                    player.Networkm_HasInvulnerability = true;
+
+
                 }
             }
+          
             
             cam = Camera.main;
 
@@ -253,9 +267,6 @@ namespace InsidetheBackrooms
 
         public override void OnInitializeMelon()
         {
-            // Center the window on the screen
-            windowRect.x = (Screen.width - windowRect.width) / 2;
-            windowRect.y = (Screen.height - windowRect.height) / 2;
 
             xray = new Material(Shader.Find("Hidden/Internal-Colored"))
             {
@@ -270,73 +281,29 @@ namespace InsidetheBackrooms
 
         }
 
-   
-
-        public void MenuWindow(int windowID)
+        //menu part
+        private Rect menuRect = new Rect(10, 10, 460, 300); // Initial position and size of the menu
+        private int selectedTab = 0;
+        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker" };
+        private Vector2 scrollPosition = Vector2.zero;
+    
+        private void DrawMenu(int windowID)
         {
-            GUILayout.BeginHorizontal();
-
             // Create toggle buttons for each tab
-            GUILayout.BeginVertical(GUILayout.Width(100));
-            if (GUILayout.Toggle(tab == 0, "Main", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 0;
-            }
-
-            if (GUILayout.Toggle(tab == 1, "Esp", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 1;
-            }
-            if (GUILayout.Toggle(tab == 2, "Easter-egg", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 2;
-            }
-            if (GUILayout.Toggle(tab == 3, "Levels", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 3;
-            }
-            if (GUILayout.Toggle(tab == 4, "Level-Stuff", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 4;
-            }
-            if (GUILayout.Toggle(tab == 5, "Debug", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 5;
-            }
-             if (GUILayout.Toggle(tab == 6, "Unlocker", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tab = 6;
-            }
-         
-            GUILayout.EndVertical();
-
-            // Display content for the selected tab
-
-
-            GUILayout.BeginArea(new Rect(10, windowRect.height - 30, windowRect.width - 20, 40));
             GUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Save Config"))
+            for (int i = 0; i < tabNames.Length; i++)
             {
-                SaveConfig();
+                if (GUILayout.Toggle(selectedTab == i, tabNames[i], "Button", GUILayout.ExpandWidth(true)))
+                {
+                    selectedTab = i; // Set the selected tab index
+                }
             }
-
-            if (GUILayout.Button("Load Config"))
-            {
-                LoadConfig();
-
-            }
-
             GUILayout.EndHorizontal();
-            GUILayout.EndArea();
 
-
-
-            GUILayout.BeginVertical();
-
+            scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
             // Display content for the selected tab
-            switch (tab)
+            switch (selectedTab)
             {
                 case 0:
                     GUILayout.BeginVertical(GUI.skin.box);
@@ -352,14 +319,14 @@ namespace InsidetheBackrooms
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
                   
-                 
+
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
 
                     GUILayout.EndVertical();
 
-              
+
 
                     break;
 
@@ -371,7 +338,7 @@ namespace InsidetheBackrooms
                         tab2 = 0;
                     }
 
-                    if (GUILayout.Toggle(tab2 == 1, "Locks", "Button", GUILayout.ExpandWidth(true)))
+                    if (GUILayout.Toggle(tab2 == 1, "Others", "Button", GUILayout.ExpandWidth(true)))
                     {
                         tab2 = 1;
                     }
@@ -386,6 +353,7 @@ namespace InsidetheBackrooms
                             GUILayout.BeginVertical();
                             PlayersEsp = GUILayout.Toggle(PlayersEsp, "Players");
                             GhostPlayersEsp = GUILayout.Toggle(GhostPlayersEsp, "GhostPlayers");
+                            Suitcaseesp = GUILayout.Toggle(Suitcaseesp, "SuitCase");
 
                             GUILayout.EndVertical();
 
@@ -395,14 +363,14 @@ namespace InsidetheBackrooms
                             EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
                             Chamsesp = GUILayout.Toggle(Chamsesp, "Chams");
                             Boxtoggle = GUILayout.Toggle(Boxtoggle, "Box");
-                           
+
                             GUILayout.EndVertical();
 
                             GUILayout.EndHorizontal();
 
                             GUILayout.EndVertical();
                             break;
-                          
+
                         case 1:
                             GUILayout.BeginVertical(GUI.skin.box);
 
@@ -435,10 +403,10 @@ namespace InsidetheBackrooms
 
                             break;
 
-                           
+
 
                     }
-                  
+
                     break;
                 case 2:
                     if (GUILayout.Button("safe unlock"))
@@ -494,115 +462,20 @@ namespace InsidetheBackrooms
 
                     break;
 
+              
                 case 3:
-                    if (GUILayout.Button("Fun-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-
-                           
-                            player.TeleportPlayer(player.funLevelPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("First-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.firstLevelPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Second-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.secondLevelPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Third-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.thirdLevelPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Drainage-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.drainagePos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Parking-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.parkingPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Hallway-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.hallwayPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("Pool-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.poolPos.transform.position);
-
-                        }
-                    }
-                    if (GUILayout.Button("End-Level"))
-                    {
-
-                        foreach (MiscTest player in MiscTest)
-                        {
-                           
-                            player.TeleportPlayer(player.endPos.transform.position);
-
-                        }
-                    }
-                   
-
-
-                    break;
-                case 4:
                     if (GUILayout.Button("Close Vents<idk>"))
                     {
-                        
+
                         foreach (AirVent player in AirVent)
                         {
                             player.UserCode_CmdClose();
                         }
                     }
-                 
+
 
                     break;
-                case 5:
+                case 4:
                     if (GUILayout.Button("CmdKillPlayer<wip>"))
                     {
                         foreach (PlayerStats player in BasePlayer)
@@ -619,13 +492,13 @@ namespace InsidetheBackrooms
                     {
                         foreach (RespawnDoor player in RespawnDoor)
                         {
-                            
-                                player.DoRespawn();
-                                player._DoRespawn_b__27_0();
-                            
+
+                            player.DoRespawn();
+                          
+
                         }
                     }
-                   
+
                     if (GUILayout.Button("ItemDumper"))
                     {
 
@@ -642,10 +515,10 @@ namespace InsidetheBackrooms
                         }
 
                     }
-                 
+
                     break;
-              
-                case 6:
+
+                case 5:
                     GUILayout.BeginHorizontal();
                     if (GUILayout.Toggle(tab3 == 0, "Main", "Button", GUILayout.ExpandWidth(true)))
                     {
@@ -658,7 +531,7 @@ namespace InsidetheBackrooms
                     }
                     GUILayout.EndHorizontal();
 
-                 
+
 
                     switch (tab3)
                     {
@@ -674,21 +547,23 @@ namespace InsidetheBackrooms
                                 AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_SEWER, 1);
 
                             }
-                              GUILayout.Label("Unlocks 1-5 levels");
+                            GUILayout.Label("Unlocks 1-5 levels");
                             if (GUILayout.Button("UnlockAchievements<Levels>"))
                             {
-                            
+
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_1);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_2);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_3);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_4);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_SEWER_LEVEL);
-                               
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_GRASSROOMS_LEVEL);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HOTEL_LEVEL);
+
                             }
                             GUILayout.Label("Unlocks all Achievements");
                             if (GUILayout.Button("UnlockAchievements"))
                             {
-                     
+
 
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_1);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_2);
@@ -706,14 +581,16 @@ namespace InsidetheBackrooms
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_SEWER_LEVEL);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_FUNLEVEL_ENDING);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LOST_ENDING);
-                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HOTEL_LEVEL);
+                                
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_EASY_COMPLETE);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MEDIUM_COMPLETE);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HARD_COMPLETE);
-                            
-                              
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MODDED_PLAY);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MODDER);
+
+
                             }
-                          
+
                             break;
                         case 1:
                             GUILayout.Label("Do this in Game Singleplayer only");
@@ -756,55 +633,53 @@ namespace InsidetheBackrooms
                                 AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD3, 1);
                                 AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.ANNIVERSARY_EV_23_RWD4, 1);
                             }
-                        
+
                             break;
                     }
-                            break;
-               
-
-                  
+                    break;
             }
+            GUILayout.EndScrollView();
 
-            GUILayout.EndVertical();
-
-            GUILayout.EndHorizontal();
-            GUI.DragWindow(); // Allow the user to drag the window around
-        }
-        private Vector2 scrollPosition5 = Vector2.zero;
-        private Vector2 scrollPosition7 = Vector2.zero;
-        private static Rect Itemgivewindow = new Rect(60f, 250f, 400, 400);
-        public void GiveitemsWindow(int windowID)
-        {
+            // Save and load config buttons
+            GUILayout.BeginArea(new Rect(10, menuRect.height - 30, menuRect.width - 20, 40));
             GUILayout.BeginHorizontal();
 
+            if (GUILayout.Button("Save Config"))
+            {
+                SaveConfig();
+            }
 
-            if (GUILayout.Toggle(tabitem == 0, "All-items", "Button", GUILayout.ExpandWidth(true)))
+            if (GUILayout.Button("Load Config"))
             {
-                tabitem = 0;
+                LoadConfig();
+
             }
-            if (GUILayout.Toggle(tabitem == 1, "Aid", "Button", GUILayout.ExpandWidth(true)))
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+           
+            GUI.DragWindow(); // Allow the user to drag the window around
+        }
+
+
+  
+        private Vector2 scrollPosition5 = Vector2.zero;
+        private Vector2 scrollPosition7 = Vector2.zero;
+        private string[] tabitems = { "All-items", "Aid", "Parking", "Office", "Sewers", "Hotel","Grass" };
+        private static Rect Itemgivewindow = new Rect(60f, 250f, 430, 400);
+        public void GiveitemsWindow(int windowID)
+        {
+          
+            // Create toggle buttons for each tab
+            GUILayout.BeginHorizontal();
+            for (int i = 0; i < tabitems.Length; i++)
             {
-                tabitem = 1;
-            }
-            if (GUILayout.Toggle(tabitem == 2, "Parking", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tabitem = 2;
-            }
-            if (GUILayout.Toggle(tabitem == 3, "Office", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tabitem = 3;
-            }
-            if (GUILayout.Toggle(tabitem == 4, "Sewers", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tabitem = 4;
-            }
-            if (GUILayout.Toggle(tabitem == 5, "Hotel", "Button", GUILayout.ExpandWidth(true)))
-            {
-                tabitem = 5;
+                if (GUILayout.Toggle(tabitem == i, tabitems[i], "Button", GUILayout.ExpandWidth(true)))
+                {
+                    tabitem = i; // Set the selected tab index
+                }
             }
             GUILayout.EndHorizontal();
-
-
 
 
             switch (tabitem)
@@ -962,6 +837,32 @@ namespace InsidetheBackrooms
                    
                     GUILayout.EndScrollView();
                     break;
+                case 6:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    // Create a button for each option in the options array
+                    for (int i = 0; i < Grasslanditems.Length; i++)
+                    {
+                        if (GUILayout.Button(Grasslanditems[i], GUILayout.ExpandWidth(true)))
+                        {
+                            // Get the selected location from the locations array
+                            string selectedLocation = Grasslanditems[i];
+
+                            foreach (NetworkReparent playert in NetworkReparent)
+                            {
+                                foreach (MiscTest player in MiscTest)
+                                {
+
+                                    player.CmdSpawnItem(selectedLocation, playert.localplayerParent.position);
+
+                                }
+                            }
+                        }
+                    }
+
+                    GUILayout.EndScrollView();
+                    break;
             }
 
 
@@ -1092,8 +993,7 @@ namespace InsidetheBackrooms
                 // Set the background color
                 GUI.backgroundColor = backgroundColor;
 
-                windowRect = GUI.Window(0, windowRect, (GUI.WindowFunction)MenuWindow, "Inside the Backrooms<WoodgamerHD>"); // Create the window with title "Menu"
-
+                menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "WoodgamerHD Small Menu"); // name of the menu
 
                 if (GiveList)
                 {
@@ -1198,7 +1098,24 @@ namespace InsidetheBackrooms
 
                 }
             }
+            if (Suitcaseesp)
+            {
+                foreach (SuitcaseLoot player in SuitcaseLoot)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                        player.Networkm_OwnerName + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.white, true, 12, FontStyle.Bold);
+
+
+                    }
+
+                }
+
+            }
 
             if (giftboxesp)
             {
