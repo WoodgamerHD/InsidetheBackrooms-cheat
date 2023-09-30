@@ -8,6 +8,7 @@ using System.Linq;
 using System.IO;
 using HarmonyLib;
 using static Il2Cpp.AnniversaryEvent;
+using Il2CppMultiSkinSystem;
 
 namespace InsidetheBackrooms
 {
@@ -52,7 +53,37 @@ namespace InsidetheBackrooms
 
         string[] Grasslanditems = new string[] { "Chalice_Air", "Chalice_Fire", "Chalice_Water", "Chalice_Earth", "CloverKey", "MetalDetector", "AlmondWater", "SprayCan", "Pesticide", "MotionSensor", "CalmingPills", "Diskette" };
 
-
+        string[] Skins = new string[] {
+    "OFFICE_MAN",
+    "OFFICE_MAN_BALD",
+    "OFFICE_WOMAN",
+    "PROTECTION_SUIT",
+    "HOMELESS_MAN",
+    "HOMELESS_WOMAN",
+    "YOUNG_GIRL_01",
+    "POLICE_MAN",
+    "POLICE_WOMAN",
+    "BUSINESS_MAN",
+    "PARTYGOER_COSTUME",
+    "PLAGUE_DOCTOR",
+    "HALLOWEEN_SCARECROW",
+    "VAMPIRE_GIRL",
+    "URBAN_GUY",
+    "GANG_BOSS"
+};
+        string[] Cosmetic = new string[] {
+    "NONE",
+    "DEER_MASK",
+    "SNOWMAN_MASK",
+    "ELF_BUDDY",
+    "CHRISTMAS_HAT",
+    "SILLY_GLASSES",
+    "ONI_MASK",
+    "HAT",
+    "BUG_HAT",
+    "FATCAT_BUDDY",
+    "GOLDEN_PARTY_MASK"
+};
 
         private bool EntitysEsp = false;
         private bool Chamsesp = false;
@@ -77,12 +108,9 @@ namespace InsidetheBackrooms
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
         private bool Boxtoggle = false;
-        private bool XmaxEventstart = false;
-      
+     
 
         private bool GiveList = false;
-        private bool nocliptest = false;
-        private bool dumbEntitys = false;
        
 
         public static bool NoclipTest = false;
@@ -109,7 +137,7 @@ namespace InsidetheBackrooms
         public static List<FunLevelRoom> FunLevelRoom = new List<FunLevelRoom>();
         public static List<NetworkReparent> NetworkReparent = new List<NetworkReparent>();
         public static List<NumericLock> NumericLock = new List<NumericLock>();
-       
+        public static List<SkinSystem> SkinSystem = new List<SkinSystem>();
         public static List<NumericPad3> NumericPad3 = new List<NumericPad3>();
         public static List<OldPhone> OldPhone = new List<OldPhone>();  
         public static List<AirVent> AirVent = new List<AirVent>();
@@ -133,8 +161,9 @@ namespace InsidetheBackrooms
         public static float customNameG = 0f; // Initial green value
         public static float customNameB = 0f; // Initial blue value
         private Rect windowRect = new Rect(0, 0, 400, 400); // Window position and size
-        private int tab = 0; // Current tab index
+     
         private int tab2 = 0; // Current tab index
+        private int tab4 = 0; // Current tab index
         private int tab3 = 0; // Current tab index
         private int tabitem = 0; // Current tab index
         private Color backgroundColor = Color.black; // Background color
@@ -192,7 +221,7 @@ namespace InsidetheBackrooms
                 FunLevelRoom = FindObjectsOfType<FunLevelRoom>().ToList();
                 NetworkReparent = FindObjectsOfType<NetworkReparent>().ToList();
                 NumericLock = FindObjectsOfType<NumericLock>().ToList();
-            
+                SkinSystem = FindObjectsOfType<SkinSystem>().ToList();
                 NumericPad3 = FindObjectsOfType<NumericPad3>().ToList();
                 OldPhone = FindObjectsOfType<OldPhone>().ToList();
                 AirVent = FindObjectsOfType<AirVent>().ToList();
@@ -284,7 +313,7 @@ namespace InsidetheBackrooms
         //menu part
         private Rect menuRect = new Rect(10, 10, 460, 300); // Initial position and size of the menu
         private int selectedTab = 0;
-        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker" };
+        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker","Config" };
         private Vector2 scrollPosition = Vector2.zero;
     
         private void DrawMenu(int windowID)
@@ -318,7 +347,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
-                  
+                   
 
                     GUILayout.EndVertical();
 
@@ -388,7 +417,7 @@ namespace InsidetheBackrooms
                             GUILayout.Space(10);
 
                             GUILayout.BeginVertical();
-                            ItemsEsp = GUILayout.Toggle(ItemsEsp, "Items");
+                            ItemsEsp = GUILayout.Toggle(ItemsEsp, "Removed");
                             SafeESP = GUILayout.Toggle(SafeESP, "Safe");
                             ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
                             DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
@@ -476,45 +505,152 @@ namespace InsidetheBackrooms
 
                     break;
                 case 4:
-                    if (GUILayout.Button("CmdKillPlayer<wip>"))
+
+
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Toggle(tab4 == 0, "Debug", "Button", GUILayout.ExpandWidth(true)))
                     {
-                        foreach (PlayerStats player in BasePlayer)
-                        {
-                            if (player.isLocalPlayer)
+                        tab4 = 0;
+                    }
+
+                    if (GUILayout.Toggle(tab4 == 1, "Skins", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab4 = 1;
+                    }
+                    if (GUILayout.Toggle(tab4 == 2, "Cosmetic", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab4 = 2;
+                    }
+                    GUILayout.EndHorizontal();
+
+                    switch (tab4)
+                    {
+                        case 0:
+                            GUILayout.BeginVertical(GUI.skin.box);
+
+                            GUILayout.BeginHorizontal();
+                            GUILayout.BeginVertical();
+
+                            if (GUILayout.Button("CmdKillPlayer<wip>"))
+                            {
+                                foreach (PlayerStats player in BasePlayer)
+                                {
+                                    if (player.isLocalPlayer)
+                                    {
+
+                                        player.UserCode_CmdKillPlayer();
+                                        player.CmdKillPlayer();
+                                    }
+                                }
+                            }
+                            if (GUILayout.Button("DoRespawn<wip>"))
+                            {
+                                foreach (RespawnDoor player in RespawnDoor)
+                                {
+
+                                    player.DoRespawn();
+
+
+                                }
+                            }
+
+                        
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.Space(10);
+
+                            GUILayout.BeginVertical();
+
+                            if (GUILayout.Button("ItemDumper"))
                             {
 
-                                player.UserCode_CmdKillPlayer();
-                                player.CmdKillPlayer();
+                                StreamWriter SW = new StreamWriter("m_ItemName.txt");
+                                // Find all objects in the scene
+                                CollectableItem[] objects = FindObjectsOfType<CollectableItem>();
+
+
+
+                                // Loop through the objects and print their names to the console
+                                foreach (CollectableItem obj in objects)
+                                {
+                                    SW.WriteLine(obj.m_ItemName);
+                                }
+
                             }
-                        }
+
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
+                            break;
+
+                        case 1:
+                         
+                            // Begin a scroll view to allow scrolling through the button list
+                            scrollPosition6 = GUILayout.BeginScrollView(scrollPosition6);
+
+                            // Create a button for each option in the options array
+                            for (int i = 0; i < Skins.Length; i++)
+                            {
+                                if (GUILayout.Button(Skins[i]))
+                                {
+                                    // Get the selected location from the locations array
+                                 
+                                    foreach (SkinSystem player in SkinSystem)
+                                    {
+
+                                        player.CmdSelectSkin((SkinNameID)i);
+
+
+
+                                    }
+                                }
+                            }
+                            GUILayout.EndScrollView();
+
+
+
+
+
+
+                            break;
+                        case 2:
+                            // Begin a scroll view to allow scrolling through the button list
+                            scrollPosition7 = GUILayout.BeginScrollView(scrollPosition7);
+
+                            // Create a button for each option in the options array
+                            for (int i = 0; i < Cosmetic.Length; i++)
+                            {
+                                if (GUILayout.Button(Cosmetic[i]))
+                                {
+                                    // Get the selected location from the locations array
+
+                                    foreach (SkinSystem player in SkinSystem)
+                                    {
+
+                                        player.CmdSwitchCosmetic((CosmeticNameID)i);
+
+
+
+                                    }
+                                }
+                            }
+                            GUILayout.EndScrollView();
+
+                            break;
+
+
+
                     }
-                    if (GUILayout.Button("DoRespawn<wip>"))
-                    {
-                        foreach (RespawnDoor player in RespawnDoor)
-                        {
-
-                            player.DoRespawn();
-                          
-
-                        }
-                    }
-
-                    if (GUILayout.Button("ItemDumper"))
-                    {
-
-                        StreamWriter SW = new StreamWriter("m_ItemName.txt");
-                        // Find all objects in the scene
-                        CollectableItem[] objects = FindObjectsOfType<CollectableItem>();
 
 
 
-                        // Loop through the objects and print their names to the console
-                        foreach (CollectableItem obj in objects)
-                        {
-                            SW.WriteLine(obj.m_ItemName);
-                        }
+                  
 
-                    }
+
 
                     break;
 
@@ -637,26 +773,44 @@ namespace InsidetheBackrooms
                             break;
                     }
                     break;
+                case 6:
+                    // Save and load config buttons
+
+
+                    GUILayout.BeginVertical(GUI.skin.box);
+
+                    GUILayout.BeginHorizontal();
+                    GUILayout.BeginVertical();
+                    if (GUILayout.Button("Save Config"))
+                    {
+                        SaveConfig();
+                    }
+                    GUILayout.EndVertical();
+
+                    GUILayout.Space(10);
+
+                    GUILayout.BeginVertical();
+                    if (GUILayout.Button("Load Config"))
+                    {
+                        LoadConfig();
+
+                    }
+
+                    GUILayout.EndVertical();
+
+                    GUILayout.EndHorizontal();
+
+                    GUILayout.EndVertical();
+
+                   
+
+                 
+
+                    break;
             }
             GUILayout.EndScrollView();
 
-            // Save and load config buttons
-            GUILayout.BeginArea(new Rect(10, menuRect.height - 30, menuRect.width - 20, 40));
-            GUILayout.BeginHorizontal();
-
-            if (GUILayout.Button("Save Config"))
-            {
-                SaveConfig();
-            }
-
-            if (GUILayout.Button("Load Config"))
-            {
-                LoadConfig();
-
-            }
-
-            GUILayout.EndHorizontal();
-            GUILayout.EndArea();
+         
            
             GUI.DragWindow(); // Allow the user to drag the window around
         }
@@ -664,6 +818,8 @@ namespace InsidetheBackrooms
 
   
         private Vector2 scrollPosition5 = Vector2.zero;
+        private Vector2 scrollPosition6 = Vector2.zero;
+        
         private Vector2 scrollPosition7 = Vector2.zero;
         private string[] tabitems = { "All-items", "Aid", "Parking", "Office", "Sewers", "Hotel","Grass" };
         private static Rect Itemgivewindow = new Rect(60f, 250f, 430, 400);
@@ -1080,7 +1236,7 @@ namespace InsidetheBackrooms
             }
 
 
-            if (ItemsEsp)
+         /*   if (ItemsEsp)
             {
                 foreach (CollectableItem player in ItemObj)
                 {
@@ -1097,7 +1253,7 @@ namespace InsidetheBackrooms
                     }
 
                 }
-            }
+            }*/
             if (Suitcaseesp)
             {
                 foreach (SuitcaseLoot player in SuitcaseLoot)
