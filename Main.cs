@@ -9,6 +9,7 @@ using System.IO;
 using HarmonyLib;
 using static Il2Cpp.AnniversaryEvent;
 using Il2CppMultiSkinSystem;
+using System;
 
 namespace InsidetheBackrooms
 {
@@ -86,7 +87,7 @@ namespace InsidetheBackrooms
 };
 
         private bool EntitysEsp = false;
-        private bool Chamsesp = false;
+       
         private bool ItemsEsp = false;
         private bool giftboxesp = false;
         private bool NumericLockesp = false;
@@ -148,8 +149,9 @@ namespace InsidetheBackrooms
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
         public static List<SuitcaseLoot> SuitcaseLoot = new List<SuitcaseLoot>();
         public static List<BasePlayerController> BasePlayerController = new List<BasePlayerController>();
-    
-     
+   
+
+
         public static Color TestColor
         {
             get
@@ -173,24 +175,7 @@ namespace InsidetheBackrooms
     
         private static Material xray;
 
-        public static void DoChams()
-        {
-            foreach (BaseAIEntity player in BaseAI)
-            {
-                if (player == null)
-                {
-                    continue;
-                }
-
-                foreach (Renderer renderer in player?.gameObject?.GetComponentsInChildren<Renderer>())
-                {
-
-
-                    renderer.material = xray;
-
-                }
-            }
-        }
+       
 
 
 
@@ -232,12 +217,9 @@ namespace InsidetheBackrooms
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
                 SuitcaseLoot = FindObjectsOfType<SuitcaseLoot>().ToList();
                 BasePlayerController = FindObjectsOfType<BasePlayerController>().ToList();
+             
 
 
-                if (Chamsesp)
-                {
-                    DoChams();
-                }
 
                 natNextUpdateTime = 0f;
             }
@@ -255,9 +237,10 @@ namespace InsidetheBackrooms
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
-
-                    player.Stamina = float.MaxValue;
-
+                    if (player.isLocalPlayer)
+                    {
+                        player.Stamina = float.MaxValue;
+                    }
 
 
 
@@ -272,15 +255,16 @@ namespace InsidetheBackrooms
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
-
-                    player.health = float.MaxValue;
-                    player.anxiety = 0;
-                    player.m_Radiation = 0;
-                    player.m_HasEnergyBoost = true;
-                    player.m_Paralized = false;
-                    player.m_HasInvulnerability = true;
-                    player.Networkm_HasInvulnerability = true;
-
+                    if (player.isLocalPlayer)
+                    {
+                        player.health = float.MaxValue;
+                        player.anxiety = 0;
+                        player.m_Radiation = 0;
+                        player.m_HasEnergyBoost = true;
+                        player.m_Paralized = false;
+                        player.m_HasInvulnerability = true;
+                        player.Networkm_HasInvulnerability = true;
+                    }
 
                 }
             }
@@ -390,7 +374,7 @@ namespace InsidetheBackrooms
 
                             GUILayout.BeginVertical();
                             EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
-                            Chamsesp = GUILayout.Toggle(Chamsesp, "Chams");
+                        
                             Boxtoggle = GUILayout.Toggle(Boxtoggle, "Box");
 
                             GUILayout.EndVertical();
@@ -531,37 +515,6 @@ namespace InsidetheBackrooms
                             GUILayout.BeginHorizontal();
                             GUILayout.BeginVertical();
 
-                            if (GUILayout.Button("CmdKillPlayer<wip>"))
-                            {
-                                foreach (PlayerStats player in BasePlayer)
-                                {
-                                    if (player.isLocalPlayer)
-                                    {
-
-                                        player.UserCode_CmdKillPlayer();
-                                        player.CmdKillPlayer();
-                                    }
-                                }
-                            }
-                            if (GUILayout.Button("DoRespawn<wip>"))
-                            {
-                                foreach (RespawnDoor player in RespawnDoor)
-                                {
-
-                                    player.DoRespawn();
-
-
-                                }
-                            }
-
-                        
-
-                            GUILayout.EndVertical();
-
-                            GUILayout.Space(10);
-
-                            GUILayout.BeginVertical();
-
                             if (GUILayout.Button("ItemDumper"))
                             {
 
@@ -578,6 +531,39 @@ namespace InsidetheBackrooms
                                 }
 
                             }
+
+                                  if (GUILayout.Button("CmdKillPlayer<wip>"))
+                                  {
+                                      foreach (PlayerStats player in BasePlayer)
+                                      {
+                                          if (player.isLocalPlayer)
+                                          {
+
+                                              player.UserCode_CmdKillPlayer();
+                                              player.CmdKillPlayer();
+                                          }
+                                      }
+                                  }
+                                  if (GUILayout.Button("DoRespawn<wip>"))
+                                  {
+                                      foreach (RespawnDoor player in RespawnDoor)
+                                      {
+
+                                          player.DoRespawn();
+
+
+                                      }
+                                  }
+                            
+
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.Space(10);
+
+                            GUILayout.BeginVertical();
+
+                        
 
 
                             GUILayout.EndVertical();
@@ -815,8 +801,7 @@ namespace InsidetheBackrooms
             GUI.DragWindow(); // Allow the user to drag the window around
         }
 
-
-  
+      
         private Vector2 scrollPosition5 = Vector2.zero;
         private Vector2 scrollPosition6 = Vector2.zero;
         
@@ -1068,12 +1053,12 @@ namespace InsidetheBackrooms
             return Bones;
         }
 
-
+     
 
         void SaveConfig()
         {
             PlayerPrefs.SetInt("EntitysEsp", EntitysEsp ? 1 : 0);
-            PlayerPrefs.SetInt("Chamsesp", Chamsesp ? 1 : 0);
+          
             PlayerPrefs.SetInt("ItemsEsp", ItemsEsp ? 1 : 0);
             PlayerPrefs.SetInt("giftboxesp", giftboxesp ? 1 : 0);
             PlayerPrefs.SetInt("NumericLockesp", NumericLockesp ? 1 : 0);
@@ -1104,7 +1089,7 @@ namespace InsidetheBackrooms
             if (PlayerPrefs.HasKey("EntitysEsp"))
             {
                 EntitysEsp = PlayerPrefs.GetInt("EntitysEsp") == 1;
-                Chamsesp = PlayerPrefs.GetInt("Chamsesp") == 1;
+              
                 ItemsEsp = PlayerPrefs.GetInt("ItemsEsp") == 1;
                 giftboxesp = PlayerPrefs.GetInt("giftboxesp") == 1;
                 NumericLockesp = PlayerPrefs.GetInt("NumericLockesp") == 1;
@@ -1195,6 +1180,10 @@ namespace InsidetheBackrooms
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                        player.m_PlayerName + "\n" + "Ghost" + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", TestColor, true, 12, FontStyle.Bold);
                     }
+                    else if (player.m_Initialized)
+                    {
+                        MonoBehaviour.Destroy(player);
+                    }
                 }
 
 
@@ -1236,24 +1225,24 @@ namespace InsidetheBackrooms
             }
 
 
-         /*   if (ItemsEsp)
-            {
-                foreach (CollectableItem player in ItemObj)
-                {
-                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+          /*   if (ItemsEsp)
+               {
+                   foreach (NetworkPlayerInfo player in NetworkPlayerInfo)
+                   {
+                       Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
-                    if (ESPUtils.IsOnScreen(w2s) && DistanceFromCamera(player.transform.position) < 80)
-                    {
-                    
-
-                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                        player.m_ItemName, Color.blue, true, 12, FontStyle.Bold);
+                       if (ESPUtils.IsOnScreen(w2s) && DistanceFromCamera(player.transform.position) < 80)
+                       {
 
 
-                    }
+                           ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                           player.m_PlayerName, player.m_PlayerColor, true, 12, FontStyle.Bold);
 
-                }
-            }*/
+
+                       }
+
+                   }
+               }*/
             if (Suitcaseesp)
             {
                 foreach (SuitcaseLoot player in SuitcaseLoot)
@@ -1306,7 +1295,7 @@ namespace InsidetheBackrooms
 
 
                     }
-
+                  
                 }
             }
             if (SafeESP)
