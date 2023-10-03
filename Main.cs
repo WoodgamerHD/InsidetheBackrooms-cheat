@@ -109,6 +109,7 @@ namespace InsidetheBackrooms
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
         private bool Boxtoggle = false;
+        private bool posttest = false;
      
 
         private bool GiveList = false;
@@ -149,6 +150,7 @@ namespace InsidetheBackrooms
         public static List<AnniversaryEvent> AnniversaryEvent = new List<AnniversaryEvent>();
         public static List<SuitcaseLoot> SuitcaseLoot = new List<SuitcaseLoot>();
         public static List<BasePlayerController> BasePlayerController = new List<BasePlayerController>();
+        public static List<GameManager> GameManager = new List<GameManager>();
    
 
 
@@ -217,6 +219,7 @@ namespace InsidetheBackrooms
                 AnniversaryEvent = FindObjectsOfType<AnniversaryEvent>().ToList();
                 SuitcaseLoot = FindObjectsOfType<SuitcaseLoot>().ToList();
                 BasePlayerController = FindObjectsOfType<BasePlayerController>().ToList();
+                GameManager = FindObjectsOfType<GameManager>().ToList();
              
 
 
@@ -249,7 +252,15 @@ namespace InsidetheBackrooms
 
             }
 
+          
 
+                foreach (GameManager player in GameManager)
+                {
+                    player.gamePostProcessing.isGlobal = !posttest;
+                    player.gamePostProcessing.profile.isDirty = !posttest;
+                }
+
+           
 
             if (Godmode)
             {
@@ -297,7 +308,7 @@ namespace InsidetheBackrooms
         //menu part
         private Rect menuRect = new Rect(10, 10, 460, 300); // Initial position and size of the menu
         private int selectedTab = 0;
-        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker","Config" };
+        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker", "Config" };
         private Vector2 scrollPosition = Vector2.zero;
     
         private void DrawMenu(int windowID)
@@ -331,6 +342,7 @@ namespace InsidetheBackrooms
 
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
+                    posttest = GUILayout.Toggle(posttest, "PostProcessing");
                    
 
                     GUILayout.EndVertical();
@@ -374,7 +386,6 @@ namespace InsidetheBackrooms
 
                             GUILayout.BeginVertical();
                             EntitysEsp = GUILayout.Toggle(EntitysEsp, "Entitys");
-                        
                             Boxtoggle = GUILayout.Toggle(Boxtoggle, "Box");
 
                             GUILayout.EndVertical();
@@ -401,7 +412,7 @@ namespace InsidetheBackrooms
                             GUILayout.Space(10);
 
                             GUILayout.BeginVertical();
-                            ItemsEsp = GUILayout.Toggle(ItemsEsp, "Removed");
+                            ItemsEsp = GUILayout.Toggle(ItemsEsp, "Items<Buggy>");
                             SafeESP = GUILayout.Toggle(SafeESP, "Safe");
                             ElevatorEsp = GUILayout.Toggle(ElevatorEsp, "Elevator");
                             DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
@@ -557,18 +568,7 @@ namespace InsidetheBackrooms
                             
 
 
-                            GUILayout.EndVertical();
-
-                            GUILayout.Space(10);
-
-                            GUILayout.BeginVertical();
-
-                        
-
-
-                            GUILayout.EndVertical();
-
-                            GUILayout.EndHorizontal();
+                           
 
                             GUILayout.EndVertical();
                             break;
@@ -1079,6 +1079,7 @@ namespace InsidetheBackrooms
             PlayerPrefs.SetInt("Clockesp", Clockesp ? 1 : 0);
             PlayerPrefs.SetInt("Boxtoggle", Boxtoggle ? 1 : 0);
             PlayerPrefs.SetInt("GiveList", GiveList ? 1 : 0);
+            PlayerPrefs.SetInt("posttest", posttest ? 1 : 0);
 
             PlayerPrefs.Save();
             Debug.Log("Config saved.");
@@ -1089,7 +1090,6 @@ namespace InsidetheBackrooms
             if (PlayerPrefs.HasKey("EntitysEsp"))
             {
                 EntitysEsp = PlayerPrefs.GetInt("EntitysEsp") == 1;
-              
                 ItemsEsp = PlayerPrefs.GetInt("ItemsEsp") == 1;
                 giftboxesp = PlayerPrefs.GetInt("giftboxesp") == 1;
                 NumericLockesp = PlayerPrefs.GetInt("NumericLockesp") == 1;
@@ -1110,6 +1110,7 @@ namespace InsidetheBackrooms
                 Clockesp = PlayerPrefs.GetInt("Clockesp") == 1;
                 Boxtoggle = PlayerPrefs.GetInt("Boxtoggle") == 1;
                 GiveList = PlayerPrefs.GetInt("GiveList") == 1;
+                posttest = PlayerPrefs.GetInt("posttest") == 1;
 
                 Debug.Log("Config loaded.");
             }
@@ -1134,7 +1135,7 @@ namespace InsidetheBackrooms
                 // Set the background color
                 GUI.backgroundColor = backgroundColor;
 
-                menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "WoodgamerHD Small Menu"); // name of the menu
+                menuRect = GUI.Window(0, menuRect, (GUI.WindowFunction)DrawMenu, "WoodgamerHD Menu"); // name of the menu
 
                 if (GiveList)
                 {
@@ -1225,9 +1226,9 @@ namespace InsidetheBackrooms
             }
 
 
-          /*   if (ItemsEsp)
+            if (ItemsEsp)
                {
-                   foreach (NetworkPlayerInfo player in NetworkPlayerInfo)
+                   foreach (CollectableItem player in ItemObj)
                    {
                        Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
 
@@ -1236,13 +1237,13 @@ namespace InsidetheBackrooms
 
 
                            ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                           player.m_PlayerName, player.m_PlayerColor, true, 12, FontStyle.Bold);
+                           player.m_ItemName, Color.yellow, true, 12, FontStyle.Bold);
 
 
                        }
 
                    }
-               }*/
+               }
             if (Suitcaseesp)
             {
                 foreach (SuitcaseLoot player in SuitcaseLoot)
