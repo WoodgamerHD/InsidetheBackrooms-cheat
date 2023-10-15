@@ -151,9 +151,8 @@ namespace InsidetheBackrooms
         public static List<SuitcaseLoot> SuitcaseLoot = new List<SuitcaseLoot>();
         public static List<BasePlayerController> BasePlayerController = new List<BasePlayerController>();
         public static List<GameManager> GameManager = new List<GameManager>();
-   
 
-
+       
         public static Color TestColor
         {
             get
@@ -516,6 +515,7 @@ namespace InsidetheBackrooms
                     {
                         tab4 = 2;
                     }
+                  
                     GUILayout.EndHorizontal();
 
                     switch (tab4)
@@ -526,6 +526,7 @@ namespace InsidetheBackrooms
                             GUILayout.BeginHorizontal();
                             GUILayout.BeginVertical();
 
+                         
                             if (GUILayout.Button("ItemDumper"))
                             {
 
@@ -565,10 +566,12 @@ namespace InsidetheBackrooms
 
                                       }
                                   }
-                            
 
 
-                           
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.EndHorizontal();
 
                             GUILayout.EndVertical();
                             break;
@@ -627,7 +630,7 @@ namespace InsidetheBackrooms
                             GUILayout.EndScrollView();
 
                             break;
-
+                        
 
 
                     }
@@ -707,45 +710,20 @@ namespace InsidetheBackrooms
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_EASY_COMPLETE);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MEDIUM_COMPLETE);
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HARD_COMPLETE);
-                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MODDED_PLAY);
-                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_MODDER);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_DARKROOMS);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_OFFICE);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_SEWER);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_HOTEL);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_GRASSROOMS);
 
 
+                             
                             }
 
                             break;
                         case 1:
-                            GUILayout.Label("Do this in Game Singleplayer only");
-
-                            if (GUILayout.Button("AnniversaryEventComplete"))
-                            {
-                                foreach (AnniversaryEvent player in AnniversaryEvent)
-                                {
-
-                                    player.CompleteEvent();
-
-                                }
-                            }
-                            if (GUILayout.Button("StartAnniversaryEvent"))
-                            {
-                                foreach (AnniversaryEvent player in AnniversaryEvent)
-                                {
-
-                                    player.UserCode_RpcStartGame();
-
-                                }
-
-                            }
-                            if (GUILayout.Button("EndAnniversaryEvent"))
-                            {
-                                foreach (AnniversaryEvent player in AnniversaryEvent)
-                                {
-
-                                    player.UserCode_RpcEndEvent();
-
-                                }
-                            }
-                            GUILayout.Label("Press SteamStat to unlock all the event stuff");
+                           
+                            GUILayout.Label("Press SteamStat to unlock all Anniversary event stuff");
 
                             if (GUILayout.Button("SteamStat event"))
                             {
@@ -801,7 +779,8 @@ namespace InsidetheBackrooms
             GUI.DragWindow(); // Allow the user to drag the window around
         }
 
-      
+       
+
         private Vector2 scrollPosition5 = Vector2.zero;
         private Vector2 scrollPosition6 = Vector2.zero;
         
@@ -1120,10 +1099,7 @@ namespace InsidetheBackrooms
 
 
 
-
-
-
-
+  
         public override void OnGUI()
         {
         
@@ -1142,7 +1118,10 @@ namespace InsidetheBackrooms
                     Itemgivewindow = GUI.Window(1, Itemgivewindow, (GUI.WindowFunction)GiveitemsWindow, "Item Menu");
                 }
 
-            }
+              
+
+
+        }
       
           
                 
@@ -1452,7 +1431,8 @@ namespace InsidetheBackrooms
                             if (p != null & s != null)
                                 ESPUtils.Draw3DBox(new Bounds(p + new Vector3(0, 1.1f, 0), s + new Vector3(0, .95f, 0)), Color.red);
                         }
-                  
+
+                
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                           player.name.Replace("(Clone)", "") +  "\n" + "State: " + player.State + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.red, true, 12, FontStyle.Bold);
