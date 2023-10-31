@@ -10,6 +10,9 @@ using HarmonyLib;
 using static Il2Cpp.AnniversaryEvent;
 using Il2CppMultiSkinSystem;
 using System;
+using UnityEngine.Playables;
+using Il2CppMirror;
+using System.Text;
 
 namespace InsidetheBackrooms
 {
@@ -86,6 +89,19 @@ namespace InsidetheBackrooms
     "GOLDEN_PARTY_MASK"
 };
 
+        string[] Levels = new string[] {
+            "PLAYERS_LOBBY",
+    "LOBBY",
+    "DARK_LOBBY",
+    "OFFICE",
+    "PARKING",
+    "SEWER_DRAIN",
+    "OLD_HOTEL",
+    "GRASS_CORRIDORS",
+    "UNKNOWN"
+        };
+
+
         private bool EntitysEsp = false;
        
         private bool ItemsEsp = false;
@@ -108,11 +124,15 @@ namespace InsidetheBackrooms
         private bool LetterLockesp = false;
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
+        private bool ArtFrameesp = false;
+        private bool LostPersonsesp = false;
         private bool Boxtoggle = false;
         private bool posttest = false;
      
 
         private bool GiveList = false;
+        private bool flytest = false;
+        private bool DeadbodiesPuzzleInfo = false;
        
 
         public static bool NoclipTest = false;
@@ -122,6 +142,7 @@ namespace InsidetheBackrooms
         public static List<BaseMonsterController> BaseMonsterController = new List<BaseMonsterController>();
         public static List<PlayerController> Player = new List<PlayerController>();
         public static List<GhostPlayerController> GhostPlayer = new List<GhostPlayerController>();
+        public static List<ArtFrame> ArtFrame = new List<ArtFrame>();
         public static List<PlayerStats> BasePlayer = new List<PlayerStats>();
         public static List<CollectableItem> ItemObj = new List<CollectableItem>();
         public static List<Elevator> Elevator = new List<Elevator>();       
@@ -151,6 +172,9 @@ namespace InsidetheBackrooms
         public static List<SuitcaseLoot> SuitcaseLoot = new List<SuitcaseLoot>();
         public static List<BasePlayerController> BasePlayerController = new List<BasePlayerController>();
         public static List<GameManager> GameManager = new List<GameManager>();
+        public static List<BackroomsManager> BackroomsManager = new List<BackroomsManager>();
+        public static List<LostPersonsPuzzle> LostPersonsPuzzle = new List<LostPersonsPuzzle>();
+        public static List<DeadbodiesPuzzle> DeadbodiesPuzzle = new List<DeadbodiesPuzzle>();
 
        
         public static Color TestColor
@@ -158,6 +182,13 @@ namespace InsidetheBackrooms
             get
             {
                 return new Color(1.2f, 3f, 4.1f, 1f);
+            }
+        }
+        public static Color TestColor2
+        {
+            get
+            {
+                return new Color(8.2f, 5f, 1.1f, 1f);
             }
         }
         public static float customNameR = 1f; // Initial red value
@@ -176,7 +207,6 @@ namespace InsidetheBackrooms
     
         private static Material xray;
 
-       
 
 
 
@@ -219,6 +249,10 @@ namespace InsidetheBackrooms
                 SuitcaseLoot = FindObjectsOfType<SuitcaseLoot>().ToList();
                 BasePlayerController = FindObjectsOfType<BasePlayerController>().ToList();
                 GameManager = FindObjectsOfType<GameManager>().ToList();
+                ArtFrame = FindObjectsOfType<ArtFrame>().ToList();
+                BackroomsManager = FindObjectsOfType<BackroomsManager>().ToList();
+                LostPersonsPuzzle = FindObjectsOfType<LostPersonsPuzzle>().ToList();
+                DeadbodiesPuzzle = FindObjectsOfType<DeadbodiesPuzzle>().ToList();
              
 
 
@@ -234,8 +268,8 @@ namespace InsidetheBackrooms
                 showMenu = !showMenu;
 
             }
-
-            if (infStamina)
+          
+                if (infStamina)
             {
                 foreach (PlayerStats player in BasePlayer)
                 {
@@ -335,6 +369,7 @@ namespace InsidetheBackrooms
                     GUILayout.BeginVertical();
                     Godmode = GUILayout.Toggle(Godmode, "GodMode<WIP>");
                     infStamina = GUILayout.Toggle(infStamina, "infStamina");
+                    DeadbodiesPuzzleInfo = GUILayout.Toggle(DeadbodiesPuzzleInfo, "Deadbodies-Info");
                     GUILayout.EndVertical();
 
                     GUILayout.Space(10);
@@ -342,8 +377,7 @@ namespace InsidetheBackrooms
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
                     posttest = GUILayout.Toggle(posttest, "PostProcessing");
-                   
-
+                  
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
@@ -405,6 +439,7 @@ namespace InsidetheBackrooms
                             NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLock");
                             RespawnDoorEsp = GUILayout.Toggle(RespawnDoorEsp, "RespawnDoor");
                             Clockesp = GUILayout.Toggle(Clockesp, "Clock");
+                            LostPersonsesp = GUILayout.Toggle(LostPersonsesp, "LostPersons");
 
                             GUILayout.EndVertical();
 
@@ -417,6 +452,7 @@ namespace InsidetheBackrooms
                             DoorEsp = GUILayout.Toggle(DoorEsp, "Door");
                             NumericPad3esp = GUILayout.Toggle(NumericPad3esp, "NumericPad");
                             LeverDoorLockesp = GUILayout.Toggle(LeverDoorLockesp, "LeverDoor");
+                            ArtFrameesp = GUILayout.Toggle(ArtFrameesp, "ArtFrame");
                             GUILayout.EndVertical();
 
                             GUILayout.EndHorizontal();
@@ -515,7 +551,10 @@ namespace InsidetheBackrooms
                     {
                         tab4 = 2;
                     }
-                  
+                    if (GUILayout.Toggle(tab4 == 3, "Set-Level-lights", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab4 = 3;
+                    }
                     GUILayout.EndHorizontal();
 
                     switch (tab4)
@@ -630,7 +669,30 @@ namespace InsidetheBackrooms
                             GUILayout.EndScrollView();
 
                             break;
-                        
+                        case 3:
+                            // Begin a scroll view to allow scrolling through the button list
+                            scrollPosition7 = GUILayout.BeginScrollView(scrollPosition7);
+
+                            // Create a button for each option in the options array
+                            for (int i = 0; i < Levels.Length; i++)
+                            {
+                                if (GUILayout.Button(Levels[i]))
+                                {
+                                    // Get the selected location from the locations array
+
+                                    foreach (BackroomsManager player in BackroomsManager)
+                                    {
+
+                                        player.SetBackroomsLevel((BackroomsLevel)i);
+
+
+
+                                    }
+                                }
+                            }
+                            GUILayout.EndScrollView();
+
+                            break;
 
 
                     }
@@ -653,6 +715,11 @@ namespace InsidetheBackrooms
                     if (GUILayout.Toggle(tab3 == 1, "Anniversary", "Button", GUILayout.ExpandWidth(true)))
                     {
                         tab3 = 1;
+
+                    }
+                    if (GUILayout.Toggle(tab3 == 2, "HatsUnlocker", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab3 = 2;
                     }
                     GUILayout.EndHorizontal();
 
@@ -735,7 +802,22 @@ namespace InsidetheBackrooms
                             }
 
                             break;
-                    }
+                        case 2:
+
+                                GUILayout.Label("Halloween/Xmax stuff");
+
+                                if (GUILayout.Button("Halloween/Xmax"))
+                                {
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.HALLOWEEN_EV_22, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.CHRISTMAS_EV_22, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_1_UNLOCKED, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_2_UNLOCKED, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_3_UNLOCKED, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_4_UNLOCKED, 1);
+                                }
+
+                                break;
+                        }
                     break;
                 case 6:
                     // Save and load config buttons
@@ -1059,6 +1141,9 @@ namespace InsidetheBackrooms
             PlayerPrefs.SetInt("Boxtoggle", Boxtoggle ? 1 : 0);
             PlayerPrefs.SetInt("GiveList", GiveList ? 1 : 0);
             PlayerPrefs.SetInt("posttest", posttest ? 1 : 0);
+            PlayerPrefs.SetInt("LostPersonsesp", LostPersonsesp ? 1 : 0);
+            PlayerPrefs.SetInt("ArtFrameesp", ArtFrameesp ? 1 : 0);
+            PlayerPrefs.SetInt("DeadbodiesPuzzleInfo", DeadbodiesPuzzleInfo ? 1 : 0);
 
             PlayerPrefs.Save();
             Debug.Log("Config saved.");
@@ -1090,19 +1175,45 @@ namespace InsidetheBackrooms
                 Boxtoggle = PlayerPrefs.GetInt("Boxtoggle") == 1;
                 GiveList = PlayerPrefs.GetInt("GiveList") == 1;
                 posttest = PlayerPrefs.GetInt("posttest") == 1;
+                LostPersonsesp = PlayerPrefs.GetInt("LostPersonsesp") == 1;
+                ArtFrameesp = PlayerPrefs.GetInt("ArtFrameesp") == 1;
+                DeadbodiesPuzzleInfo = PlayerPrefs.GetInt("DeadbodiesPuzzleInfo") == 1;
 
                 Debug.Log("Config loaded.");
             }
         }
 
+        string DictionaryToReadableText(SyncDictionary<string, string> dictionary)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var entry in dictionary)
+            {
+                sb.AppendLine($"Names: {entry.Key}, Items: {entry.Value}");
+            }
+
+            return sb.ToString();
+        }
 
 
 
 
-  
         public override void OnGUI()
         {
-        
+            if(DeadbodiesPuzzleInfo)
+            {
+                foreach (LostPersonsPuzzle item in LostPersonsPuzzle)
+                {
+                    string readableText = DictionaryToReadableText(item.m_PersonsSelected);
+                  
+                    Vector2 position = new Vector2(200, 100);
+
+                    ESPUtils.DrawString(position, readableText, Color.white, true, 12, FontStyle.Bold);
+
+
+                }
+
+            }
 
 
 
@@ -1160,10 +1271,7 @@ namespace InsidetheBackrooms
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
                        player.m_PlayerName + "\n" + "Ghost" + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", TestColor, true, 12, FontStyle.Bold);
                     }
-                    else if (player.m_Initialized)
-                    {
-                        MonoBehaviour.Destroy(player);
-                    }
+                  
                 }
 
 
@@ -1181,7 +1289,7 @@ namespace InsidetheBackrooms
 
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.name.Replace("(Clone)", "") + "\n" + "Point: " + player.teleportPoint.transform.position + "\n" + "EndGameType: " + player.endGameType, Color.magenta, true, 12, FontStyle.Bold);
+                       "ExitZone" + "\n" + "Point: " + player.teleportPoint.transform.position + "\n" + "EndGameType: " + player.endGameType, Color.magenta, true, 12, FontStyle.Bold);
                     }
                 }
 
@@ -1199,7 +1307,7 @@ namespace InsidetheBackrooms
                     {
 
                         ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
-                       player.name.Replace("(Clone)", "") + "\n" + "Code: " + player.m_InternalElevatorCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.magenta, true, 12, FontStyle.Bold);
+                       "Elevator"  + "\n" + "Code: " + player.m_InternalElevatorCode + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.magenta, true, 12, FontStyle.Bold);
                     }
                 }
             }
@@ -1378,6 +1486,41 @@ namespace InsidetheBackrooms
                     }
 
                 }
+            }
+            if (ArtFrameesp)
+            {
+                foreach (ArtFrame player in ArtFrame)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                        player.ArtName + "\n"+ "RoomIndex: " + player.RoomIndex + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", TestColor2, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            }
+            if (LostPersonsesp)
+            {
+                /* */
+
+                foreach (DeadbodiesPuzzle player in DeadbodiesPuzzle)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+              //      string readableText = DictionaryToReadableText(player.n);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                        player.name + "\n" + "Code: " + player.Networkm_Code +   "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", TestColor2, true, 12, FontStyle.Bold);
+                    }
+
+                }
+
+
+
             }
             if (Computeresp)
             {
