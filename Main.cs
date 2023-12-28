@@ -13,6 +13,7 @@ using System;
 using UnityEngine.Playables;
 using Il2CppMirror;
 using System.Text;
+using static Il2Cpp.Xmas22Event;
 
 namespace InsidetheBackrooms
 {
@@ -28,9 +29,9 @@ namespace InsidetheBackrooms
 
     public class InsidetheBackrooms : MelonPlugin
     {
-    
-    
-                                                                                        
+
+
+
         string[] itemNames = new string[]
 {
     "AlmondWater", "Arm", "BoilerRoomKeys","Bucket", "CalmingPills", "Cassete", "ClockHands", "CodeAbecedary", "CurvedPipe","Dart", "Ear",
@@ -75,6 +76,19 @@ namespace InsidetheBackrooms
     "URBAN_GUY",
     "GANG_BOSS"
 };
+        string[] eventtest = new string[] {
+
+            "HAT_DEER",
+			// Token: 0x04001313 RID: 4883
+			"HAT_SNOWMAN",
+			// Token: 0x04001314 RID: 4884
+			"HAT_CHRISTMAS",
+			// Token: 0x04001315 RID: 4885
+			"HAT_GNOME"
+
+            };
+
+
         string[] Cosmetic = new string[] {
     "NONE",
     "DEER_MASK",
@@ -86,7 +100,10 @@ namespace InsidetheBackrooms
     "HAT",
     "BUG_HAT",
     "FATCAT_BUDDY",
-    "GOLDEN_PARTY_MASK"
+    "GOLDEN_PARTY_MASK",
+    "ELF_HAT",
+    "COOKIE_MASK",
+    "SNOWMAN_TEDDY"
 };
 
         string[] Levels = new string[] {
@@ -122,6 +139,7 @@ namespace InsidetheBackrooms
       
         private bool Computeresp = false;
         private bool LetterLockesp = false;
+        private bool rewardesp = false;
         private bool LeverDoorLockesp = false;
         private bool Clockesp = false;
         private bool ArtFrameesp = false;
@@ -131,9 +149,10 @@ namespace InsidetheBackrooms
      
 
         private bool GiveList = false;
-        private bool flytest = false;
+
         private bool DeadbodiesPuzzleInfo = false;
-       
+        bool FlyTest = false;
+        public float NoClipSpeed = 0.1f;
 
         public static bool NoclipTest = false;
         private Color blackCol;
@@ -175,6 +194,12 @@ namespace InsidetheBackrooms
         public static List<BackroomsManager> BackroomsManager = new List<BackroomsManager>();
         public static List<LostPersonsPuzzle> LostPersonsPuzzle = new List<LostPersonsPuzzle>();
         public static List<DeadbodiesPuzzle> DeadbodiesPuzzle = new List<DeadbodiesPuzzle>();
+        public static List<LaptopPuzzle> LaptopPuzzle = new List<LaptopPuzzle>();
+        public static List<MainComputer> MainComputer = new List<MainComputer>();
+        public static List<Xmas22Event> Xmas22Event = new List<Xmas22Event>();
+        public static List<Xmas23Reward> Xmas23Reward = new List<Xmas23Reward>();
+        public static List<XmasDeer> XmasDeer = new List<XmasDeer>();
+        public static List<XmasEvilElf> XmasEvilElf = new List<XmasEvilElf>();
 
        
         public static Color TestColor
@@ -206,6 +231,11 @@ namespace InsidetheBackrooms
         float natNextUpdateTime;
     
         private static Material xray;
+
+    
+
+
+
 
 
 
@@ -253,6 +283,11 @@ namespace InsidetheBackrooms
                 BackroomsManager = FindObjectsOfType<BackroomsManager>().ToList();
                 LostPersonsPuzzle = FindObjectsOfType<LostPersonsPuzzle>().ToList();
                 DeadbodiesPuzzle = FindObjectsOfType<DeadbodiesPuzzle>().ToList();
+                MainComputer = FindObjectsOfType<MainComputer>().ToList();
+                Xmas22Event = FindObjectsOfType<Xmas22Event>().ToList();
+                Xmas23Reward = FindObjectsOfType<Xmas23Reward>().ToList();
+                XmasDeer = FindObjectsOfType<XmasDeer>().ToList();
+                XmasEvilElf = FindObjectsOfType<XmasEvilElf>().ToList();
              
 
 
@@ -313,7 +348,7 @@ namespace InsidetheBackrooms
                 }
             }
           
-            
+
             cam = Camera.main;
 
 
@@ -339,9 +374,9 @@ namespace InsidetheBackrooms
         }
 
         //menu part
-        private Rect menuRect = new Rect(10, 10, 460, 300); // Initial position and size of the menu
+        private Rect menuRect = new Rect(10, 10, 580, 300); // Initial position and size of the menu
         private int selectedTab = 0;
-        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker", "Config" };
+        private string[] tabNames = { "Main", "Esp", "Easter-egg", "Level-Stuff", "Debug", "Unlocker", "Config","Player list" };
         private Vector2 scrollPosition = Vector2.zero;
     
         private void DrawMenu(int windowID)
@@ -377,7 +412,7 @@ namespace InsidetheBackrooms
                     GUILayout.BeginVertical();
                     GiveList = GUILayout.Toggle(GiveList, "GiveList");
                     posttest = GUILayout.Toggle(posttest, "PostProcessing");
-                  
+              
                     GUILayout.EndVertical();
 
                     GUILayout.EndHorizontal();
@@ -436,6 +471,7 @@ namespace InsidetheBackrooms
                             LetterLockesp = GUILayout.Toggle(LetterLockesp, "LetterLock");
                             Computeresp = GUILayout.Toggle(Computeresp, "Computer");
                             giftboxesp = GUILayout.Toggle(giftboxesp, "Gift");
+                            rewardesp = GUILayout.Toggle(rewardesp, "Deer");
                             NumericLockesp = GUILayout.Toggle(NumericLockesp, "NumericLock");
                             RespawnDoorEsp = GUILayout.Toggle(RespawnDoorEsp, "RespawnDoor");
                             Clockesp = GUILayout.Toggle(Clockesp, "Clock");
@@ -468,6 +504,7 @@ namespace InsidetheBackrooms
 
                     break;
                 case 2:
+                    GUILayout.BeginVertical(GUI.skin.box);
                     if (GUILayout.Button("safe unlock"))
                     {
                         foreach (SafeBox player in SafeBox)
@@ -518,11 +555,12 @@ namespace InsidetheBackrooms
                             player.PerformEndForAll();
                         }
                     }
-
+                    GUILayout.EndVertical();
                     break;
 
               
                 case 3:
+                    GUILayout.BeginVertical(GUI.skin.box);
                     if (GUILayout.Button("Close Vents<idk>"))
                     {
 
@@ -531,8 +569,39 @@ namespace InsidetheBackrooms
                             player.UserCode_CmdClose();
                         }
                     }
+                    if (GUILayout.Button("Letter Lock<Unlock>"))
+                    {
 
+                        foreach (LetterLock player in LetterLock)
+                        {
+                            player.Unlock();
+                        }
+                    }
+                    if (GUILayout.Button("LaptopPuzzle<Password>"))
+                    {
 
+                        foreach (LaptopPuzzle player in LaptopPuzzle)
+                        {
+                            player.PasswordIsCorrect(player.m_CorrectPassword);
+                        }
+                    }
+                    if (GUILayout.Button("MainComputer<UnlockMain>"))
+                    {
+
+                        foreach (MainComputer player in MainComputer)
+                        {
+                            player.RpcUnlockMain();
+                        }
+                    }
+                    if (GUILayout.Button("MainComputer<RpcUnlockGrid>"))
+                    {
+
+                        foreach (MainComputer player in MainComputer)
+                        {
+                            player.RpcUnlockGrid();
+                        }
+                    }
+                    GUILayout.EndVertical();
                     break;
                 case 4:
 
@@ -554,6 +623,10 @@ namespace InsidetheBackrooms
                     if (GUILayout.Toggle(tab4 == 3, "Set-Level-lights", "Button", GUILayout.ExpandWidth(true)))
                     {
                         tab4 = 3;
+                    }
+                    if (GUILayout.Toggle(tab4 == 4, "Xmas23", "Button", GUILayout.ExpandWidth(true)))
+                    {
+                        tab4 = 4;
                     }
                     GUILayout.EndHorizontal();
 
@@ -605,7 +678,8 @@ namespace InsidetheBackrooms
 
                                       }
                                   }
-
+                           
+                            // Begin a scroll view to allow scrolling through the button list
 
 
                             GUILayout.EndVertical();
@@ -693,7 +767,80 @@ namespace InsidetheBackrooms
                             GUILayout.EndScrollView();
 
                             break;
+                        case 4:
+                            GUILayout.BeginVertical(GUI.skin.box);
 
+                            GUILayout.BeginHorizontal();
+                            GUILayout.BeginVertical();
+                         
+                            if (GUILayout.Button("XmasEvilElf<KillTarget>"))
+                            {
+                                foreach (XmasEvilElf player in XmasEvilElf)
+                                {
+
+                                    player.KillTarget();
+                                    player._KillTarget_b__42_1();
+                                    player._KillTarget_b__42_2();
+                                    player._KillTarget_b__42_3();
+
+
+                                }
+                            }
+                            if (GUILayout.Button("XmasEvilElf<RpcFreeze>"))
+                            {
+                                foreach (XmasEvilElf player in XmasEvilElf)
+                                {
+
+                                    player.RpcFreeze();
+                                    player.UserCode_RpcFreeze();
+                                  
+
+
+                                }
+                            }
+                            if (GUILayout.Button("XmasDeer<Rescue>"))
+                            {
+                                foreach (XmasDeer player in XmasDeer)
+                                {
+
+                                    player.RpcRescue();
+                                    player.PerformRescue();
+
+
+                                }
+                            }
+                            GUILayout.Label("Set Reward");
+                            // Begin a scroll view to allow scrolling through the button list
+                            scrollPositionkek = GUILayout.BeginScrollView(scrollPositionkek);
+
+                            // Create a button for each option in the options array
+                            for (int i = 0; i < eventtest.Length; i++)
+                            {
+                                if (GUILayout.Button(eventtest[i]))
+                                {
+                                    // Get the selected location from the locations array
+
+                                    foreach (Xmas23Reward player in Xmas23Reward)
+                                    {
+
+                                        player.SetReward((XmasEvent23.EventReward)i);
+
+
+
+                                    }
+                                }
+                            }
+                            GUILayout.EndScrollView();
+                            // Begin a scroll view to allow scrolling through the button list
+
+
+                            GUILayout.EndVertical();
+
+                            GUILayout.EndHorizontal();
+
+                            GUILayout.EndVertical();
+
+                            break;
 
                     }
 
@@ -722,6 +869,7 @@ namespace InsidetheBackrooms
                         tab3 = 2;
                     }
                     GUILayout.EndHorizontal();
+                    GUILayout.BeginVertical(GUI.skin.box);
 
 
 
@@ -739,8 +887,9 @@ namespace InsidetheBackrooms
                                 AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.REACH_SEWER, 1);
 
                             }
+                         
                             GUILayout.Label("Unlocks 1-5 levels");
-                            if (GUILayout.Button("UnlockAchievements<Levels>"))
+                            if (GUILayout.Button("Unlock Levels"))
                             {
 
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_LEVEL_1);
@@ -752,8 +901,18 @@ namespace InsidetheBackrooms
                                 AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.ACH_HOTEL_LEVEL);
 
                             }
+                            GUILayout.Label("Modded Stuff");
+                            if (GUILayout.Button("Achievements<MODDED>"))
+                            {
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_OFFICE);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_SEWER);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_GRASSROOMS);
+                                AchievmentManager.UnlockAchievement(AchievmentManager.Achievement.MODDED_DARKROOMS);
+
+
+                            }
                             GUILayout.Label("Unlocks all Achievements");
-                            if (GUILayout.Button("UnlockAchievements"))
+                            if (GUILayout.Button("Unlock Achievements"))
                             {
 
 
@@ -814,10 +973,16 @@ namespace InsidetheBackrooms
                                     AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_2_UNLOCKED, 1);
                                     AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_3_UNLOCKED, 1);
                                     AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_HAT_4_UNLOCKED, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_EV_23_RWD1, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_EV_23_RWD2, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_EV_23_RWD3, 1);
+                                    AchievmentManager.SetNewStatValue(AchievmentManager.SteamStat.XMAS_EV_23_RWD4, 1);
                                 }
 
                                 break;
                         }
+
+                    GUILayout.EndVertical();
                     break;
                 case 6:
                     // Save and load config buttons
@@ -853,6 +1018,28 @@ namespace InsidetheBackrooms
                  
 
                     break;
+                case 7:
+                    // Begin a scroll view to allow scrolling through the button list
+                    scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
+
+                    GUILayout.BeginVertical(GUI.skin.box);
+
+                    foreach (PlayerController player in Player)
+                    {
+                        // Display the player's name
+                        GUILayout.Label(player.components.Info.m_PlayerName);
+
+                        // Button to select the player and perform an action
+                        if (GUILayout.Button("Teleport"))
+                        {
+                            // Pass the selected player to the teleport method
+                            TeleportPlayer(player);
+                        }
+                    }
+
+                    GUILayout.EndVertical();
+                    GUILayout.EndScrollView();
+                    break;
             }
             GUILayout.EndScrollView();
 
@@ -861,10 +1048,21 @@ namespace InsidetheBackrooms
             GUI.DragWindow(); // Allow the user to drag the window around
         }
 
-       
+
+        void TeleportPlayer(PlayerController player)
+        {
+            foreach (PlayerStats playerlocal in BasePlayer)
+            {
+                // Perform teleportation logic here, e.g., teleport to the first player's position
+                player.Teleport(playerlocal.transform.position, playerlocal.transform.rotation);
+            }
+        }
+
 
         private Vector2 scrollPosition5 = Vector2.zero;
         private Vector2 scrollPosition6 = Vector2.zero;
+        private Vector2 scrollPositionkek = Vector2.zero;
+        private Vector2 scrollPositionplayerlist = Vector2.zero;
         
         private Vector2 scrollPosition7 = Vector2.zero;
         private string[] tabitems = { "All-items", "Aid", "Parking", "Office", "Sewers", "Hotel","Grass" };
@@ -891,12 +1089,12 @@ namespace InsidetheBackrooms
                     scrollPosition5 = GUILayout.BeginScrollView(scrollPosition5);
 
                     // Create a button for each option in the options array
-                    for (int i = 0; i < itemNames.Length; i++)
+                    for (int i = 0; i < ItemList.GetItemsNames().Length; i++)
                     {
-                        if (GUILayout.Button(itemNames[i]))
+                        if (GUILayout.Button(ItemList.GetItemsNames()[i]))
                         {
                             // Get the selected location from the locations array
-                            string selectedLocation = itemNames[i];
+                            string selectedLocation = ItemList.GetItemsNames()[i];
 
                             foreach (NetworkReparent playert in NetworkReparent)
                             {
@@ -1551,7 +1749,21 @@ namespace InsidetheBackrooms
 
                 }
             }
-         
+            if (rewardesp)
+            {
+              
+                foreach (XmasDeer player in XmasDeer)
+                {
+                    Vector3 w2s = cam.WorldToScreenPoint(player.transform.position);
+
+                    if (ESPUtils.IsOnScreen(w2s))
+                    {
+                        ESPUtils.DrawString(new Vector2(w2s.x, UnityEngine.Screen.height - w2s.y + 8f),
+                       player.name.Replace("(Clone)", "") + "\n" + $"M:{DistanceFromCamera(player.transform.position).ToString("F1")}", Color.white, true, 12, FontStyle.Bold);
+                    }
+
+                }
+            }
 
 
             if (EntitysEsp)
